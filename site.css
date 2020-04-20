@@ -108,34 +108,34 @@ div.note {
   top: 10px;
   left: 10px;
   background-image: url(./media/images/money.jpg);
-  background-size: 325px;
+  background-size: 347px;
   height: 70px;
   width: 163px;
-  background-position: 100% 0%;
+  background-position: 98% 0%;
 }
 div.note-100 {
-
+  background-position-y: -456px;
 }
 
 div.note-50 {
-
+  background-position-y: -381px;
 }
 
 div.note-20 {
-
+  background-position-y: -305px;
 }
 
 div.note-10 {
-
+  background-position-y: -229px;
 }
 
 div.note-5 {
-
+  background-position-y: -152px;
 }
 div.note-2 {
-
+  background-position-y: -78px;
 }
 
 div.note-1 {
-
+  background-position-y: -0px;
 }
