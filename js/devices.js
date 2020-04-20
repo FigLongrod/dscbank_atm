@@ -1,4 +1,4 @@
-import { Tools,Sounds } from "/js/tools.js";
+import { Tools,Sounds } from "./tools.js";
 
 export class ATMCashReader {
   constructor(atm) {
