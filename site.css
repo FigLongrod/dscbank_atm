@@ -95,6 +95,10 @@ img.card-logo {
     top: 10px;
     z-index: 1;
 }
+div.dispenser {
+  height: 70px;
+  width: 163px;
+}
 div.note {
   position: absolute;
   top: 0px;
