@@ -1,4 +1,4 @@
-import { Tools,Sounds } from "./tools.js";
+import { Tools, Sounds } from "./tools.js";
 
 export class ATMCashReader {
   constructor(atm) {
@@ -118,14 +118,14 @@ export class ATMCardReader {
         }
       }, 10);
     })
-    
+
   }
   insertCard(card) {
     if (!this.hasCard) {
       this.card = card;
       this.hasCard = true;
-      this.locked = true;      
-      document.dispatchEvent(new CustomEvent("remove-card", {detail: this.card }));
+      this.locked = true;
+      document.dispatchEvent(new CustomEvent("remove-card", { detail: this.card }));
     }
   }
   ejectCard() {
@@ -133,7 +133,7 @@ export class ATMCardReader {
     this.element.style.cursor = "pointer";
     let handle = Tools.addEventHandler(this.element, "click", () => {
       this.element.style.cursor = "not-allowed";
-      document.dispatchEvent(new CustomEvent("add-card", {detail: this.card }));
+      document.dispatchEvent(new CustomEvent("add-card", { detail: this.card }));
       this.card = null;
       this.hasCard = false;
       this.locked = false;
@@ -203,7 +203,7 @@ export class ATMPinReader {
 }
 
 export class ATMReceiptPrinter {
-  print(lines) {}
+  print(lines) { }
 }
 
 // define a simple 80x25 console screen
@@ -224,6 +224,7 @@ export class ATMConsole {
     for (let j = 0; j < this.width; j++) {
       row.insertCell();
     }
+    this.currentColumn = 0;
   }
   clear() {
     this.element.innerHTML = "";
@@ -242,8 +243,12 @@ export class ATMConsole {
   }
   writeChar(char, advance) {
     if (char === "`") {
-      this.currentLine++;
-      this.currentColumn = 0;
+      if (this.currentLine >= this.height - 1) {
+        this.scrollUp();
+      } else {
+        this.currentLine++;
+        this.currentColumn = 0;
+      }
       return;
     }
     let cell = null;
