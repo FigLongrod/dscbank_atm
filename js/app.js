@@ -1,5 +1,5 @@
-import {ATM} from 'js/atm.js';
-import {Cards} from 'js/cards.js';
+import {ATM} from '/js/atm.js';
+import {Cards} from '/js/cards.js';
 
 let atm = new ATM(
     document.getElementById("console"),

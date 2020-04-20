@@ -4,9 +4,9 @@ import {
   ATMCardReader,
   ATMCashReader,
   ATMPinReader
-} from "js/devices.js";
-import { FinancialHost } from "js/host.js";
-import { Tools, Sounds } from "js/tools.js";
+} from "/js/devices.js";
+import { FinancialHost } from "/js/host.js";
+import { Tools, Sounds } from "/js/tools.js";
 
 let art = [
   "Initializing...",

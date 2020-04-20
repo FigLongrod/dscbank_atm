@@ -1,4 +1,4 @@
-import {Tools} from 'js/tools.js';
+import {Tools} from '/js/tools.js';
 
 class Member {
   constructor(data) {
