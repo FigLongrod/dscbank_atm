@@ -108,10 +108,10 @@ div.note {
   top: 10px;
   left: 10px;
   background-image: url(./media/images/money.jpg);
-  background-size: 50% 50%;
+  background-size: 325px;
   height: 70px;
   width: 163px;
-  background-position: 50%;
+  background-position: 100% 0%;
 }
 div.note-100 {
 
