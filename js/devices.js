@@ -33,6 +33,7 @@ export class ATMCashDispenser {
       "100": 50,
       "50": 100,
       "20": 200,
+      "10": 100,
       "5": 200,
       "2": 7,
       "1": 1000
@@ -40,33 +41,48 @@ export class ATMCashDispenser {
   }
   dispenseNote(note) {
     return new Promise(resolve => {
+      console.log(`Dispensing a $${note} note`);
       let noteDiv = document.createElement('div');
       noteDiv.className = "note note-" + note;
       this.element.appendChild(noteDiv);
       setTimeout(resolve, 250);
     });
   }
-  dispense(amount) {
-    return new Promise((resolve, reject) => {
-      let amountDispensed = 0;
-      let amountRemaining = amount;
-      let notes = ["1", "2", "5", "20", "50", "100"];
-      while (notes.length > 0 && amountRemaining > 0) {
-        let note = notes.pop();
-        let value = parseInt(note, 10);
-        while (amountRemaining >= value && this.notes[note] > 0) {
-          this.dispenseNote(note).then(() => {
-            amountDispensed += value;
-            amountRemaining -= value;
-            this.notes[note]--;           
-          });
-        }
-      }
-      if (amountRemaining <= 0) {
-        resolve();
+  issueNotes(amountRemaining, note) {
+    let val = parseInt(note, 10)
+    console.log(`Dispensing $${note} notes up to ${amountRemaining}`);
+    return new Promise(resolve => {
+      if (this.notes[note] > 0 && amountRemaining >= val) {
+        this.dispenseNote(note).then(() => {
+          amountRemaining -= val;
+          if (amountRemaining >= val) {
+            this.issueNotes(amountRemaining, note).then(remaining => resolve(remaining));
+          } else {
+            resolve(amountRemaining);
+          }
+        });
       } else {
-        reject(amountDispensed);
+        resolve(amountRemaining);
       }
+    });
+  }
+  dispense(amount) {
+    console.log(`Dispensing notes up to ${amount}`)
+    return new Promise((resolve, reject) => {
+      this.issueNotes(amount, "100")
+        .then(remaining => this.issueNotes(remaining, "50")
+          .then(remaining => this.issueNotes(remaining, "20")
+            .then(remaining => this.issueNotes(remaining, "10")
+              .then(remaining => this.issueNotes(remaining, "5")
+                .then(remaining => this.issueNotes(remaining, "2")
+                  .then(remaining => this.issueNotes(remaining, "1")
+                    .then(remaining => {
+                      if (remaining > 0) {
+                        reject(remaining);
+                      } else {
+                        resolve();
+                      }
+                    })))))));
     });
   }
   add(notes) {

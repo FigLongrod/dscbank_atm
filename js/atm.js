@@ -41,6 +41,7 @@ let art = [
 
 export class ATM {
   constructor(consoleElement, cardreaderElement, pinreaderElement, dispenserElement) {
+    console.log("Manufacturing new ATM");
     this.console = new ATMConsole(consoleElement);
     this.dispenser = new ATMCashDispenser(dispenserElement);
     this.dispenser.dispense("50");

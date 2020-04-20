@@ -18,7 +18,7 @@ export class Tools {
       if (volume) {
         sound.volume = volume;
       }
-      sound.play().then(resolve, () => {}).catch(() => { });
+      sound.play().then(resolve, resolve).catch(resove);
     });
   }
   static fetchJSONFile(path) {
@@ -40,15 +40,15 @@ export class Tools {
 
 export const Sounds = {
   error:
-    "media/sounds/error.wav",
+    "../media/sounds/error.wav",
   cardreader:
-    "media/sounds/atm-card-sound.mp3",
+    "../media/sounds/atm-card-sound.mp3",
   pinbutton:
-    "media/sounds/atm-button-sound.mp3",
+    "../media/sounds/atm-button-sound.mp3",
   welcome:
-    "media/sounds/welcome.mp3",
+    "../media/sounds/welcome.mp3",
   startup:
-    "media/sounds/poweron.mp3",
+    "../media/sounds/poweron.mp3",
   console:
-    "media/sounds/tick.wav"
+    "../media/sounds/tick.wav"
 };
