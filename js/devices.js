@@ -259,7 +259,7 @@ export class ATMConsole {
         this.currentColumn++;
         if (this.currentColumn >= this.width) {
           this.currentColumn = 0;
-          if (this.currentLine > this.height - 1) {
+          if (this.currentLine >= this.height - 1) {
             this.scrollUp();
           } else {
             this.currentLine++;

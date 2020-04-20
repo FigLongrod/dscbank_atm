@@ -175,10 +175,7 @@ export class ATM {
                   ""
                 ])
                 .then(() =>
-                  this.runManageAccount(this.session.accounts[num - 1]).then(
-                    resolve,
-                    reject
-                  )
+                  this.runManageAccount(this.session.accounts[num - 1])
                 );
             } else {
               Tools.play(Sounds.error);
@@ -196,17 +193,17 @@ export class ATM {
       switch (account.type) {
         case "SAVINGS":
           this.runManageSavings(account).then(() =>
-            this.accountListHeader().then(resolve, reject)
+            this.accountListHeader()
           );
           break;
         case "CREDIT":
           this.runManageCredit(account).then(() =>
-            this.accountListHeader().then(resolve, reject)
+            this.accountListHeader()
           );
           break;
         case "LOAN":
           this.runManageLoan(account).then(() =>
-            this.accountListHeader().then(resolve, reject)
+            this.accountListHeader()
           );
           break;
       }
@@ -254,7 +251,7 @@ export class ATM {
                           "Cash Withdrawal",
                           account,
                           account.available
-                        ).then(resolve)
+                        )
                       );
                     break;
                   case "Funds Transfer":
@@ -264,7 +261,7 @@ export class ATM {
                         "",
                         "You selected: Funds Transfer from " + account.name
                       ])
-                      .then(() => this.runTransfer(account).then(resolve));
+                      .then(() => this.runTransfer(account));
                     break;
                   case "Cash Deposit":
                     Tools.removeEventHandler(handler);
@@ -273,7 +270,7 @@ export class ATM {
                         "",
                         "You selected: Cash Deposit to " + account.name
                       ])
-                      .then(() => this.runDeposit(account).then(resolve));
+                      .then(() => this.runDeposit(account));
                     break;
                   default:
                     Tools.play(Sounds.error);
@@ -331,7 +328,7 @@ export class ATM {
                           "Cash Advance",
                           account,
                           account.available
-                        ).then(resolve, reject)
+                        )
                       );
                     break;
                   case "Make Cash Payment":
@@ -342,7 +339,7 @@ export class ATM {
                         "You selected: Make Cash Payment to" + account.name
                       ])
                       .then(() =>
-                        this.runDeposit(account).then(resolve, reject)
+                        this.runDeposit(account)
                       );
                     break;
                   default:
@@ -412,7 +409,7 @@ export class ATM {
                         "You selected: Redraw Transfer from " + account.name
                       ])
                       .then(() =>
-                        this.runTransfer(account).then(resolve, reject)
+                        this.runTransfer(account)
                       );
                     break;
                   case "Make Cash Payment":
@@ -423,7 +420,7 @@ export class ATM {
                         "You selected: Make Cash Payment to " + account.name
                       ])
                       .then(() =>
-                        this.runDeposit(account).then(resolve, reject)
+                        this.runDeposit(account)
                       );
                     break;
                   default:
@@ -535,7 +532,7 @@ export class ATM {
               this.console
                 .appendLines(["", "Invalid amount entered."])
                 .then(() =>
-                  this.runWithdraw(action, account, max).then(resolve, reject)
+                  this.runWithdraw(action, account, max)
                 );
             }
           });
@@ -632,7 +629,7 @@ export class ATM {
                     ])
                     .then(() => {
                       this.cardreader.ejectCard();
-                      reject("FAILED");
+                      this.waitForTakeCard().then(reject());
                     });
                 }
               );
