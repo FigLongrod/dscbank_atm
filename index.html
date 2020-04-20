@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>DSC Bank of Daytona</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/site.css" />
+
+    <!-- import the webpage's javascript file -->
+    <script type="module" src="/js/app.js" defer></script>
+  </head>
+  <body>
+    <h1>DSC Bank of Daytona</h1>
+    <h2>Automatic Teller Machine</h2>
+    <h3>Terminal #715</h3>
+    <table style="background-color: #cccccc;">
+      <tr>
+        <td rowspan="3" style="vertical-align: top;">
+          <table id="console"></table>
+        </td>
+        <td style="vertical-align: bottom; text-align: center;">
+          <div id="cardreader" style="position: relative;">
+            <img
+              src="/media/images/cardslot.png"
+            />
+            <img class="red" src="/media/images/red.png" style="position: absolute;
+    top: 65px;
+    width: 20px;
+    right: 15px;
+    height: 20px;"/>
+            <img class="green" src="/media/images//geen.png" style="position: absolute;
+    top: 65px;
+    width: 20px;
+    right: 15px;
+    height: 20px; display: none;"/>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; text-align: center;">
+          <div id="pinreader" style="position: relative;">
+            <div class="pin"></div>
+            <img
+              src="/media/images/pinpad.png"
+            />
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top; text-align: center;">
+          <div id="dispenser" style="position: relative;">
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <div id="cards"></div>
+  </body>
+</html>

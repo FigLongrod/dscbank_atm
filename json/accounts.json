@@ -1,0 +1,144 @@
+[
+  {
+    "id": 1,
+    "title": "Mr",
+    "firstName": "William",
+    "lastName": "Gerardi",
+    "cardNumber": "1045-6321-9000-5012",
+    "pin": "1098",
+    "maxTransactionsPerDay": 10,
+    "locks": [],
+    "accounts": [
+      {
+        "id": 1,
+        "name": "Bill's Savings",
+        "type": "SAVINGS",
+        "balance": {
+          "total": 32678,
+          "locked": 0,
+          "limit": 9999999999
+        }
+      },
+      {
+        "id": 2,
+        "name": "Car Loan",
+        "type": "LOAN",
+        "balance": {
+          "total": -41211,
+          "locked": 0,
+          "limit": 0
+        },
+        "hasRedraw": false
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Mrs",
+    "firstName": "Deborah",
+    "lastName": "Carrey",
+    "cardNumber": "1511-6321-9780-7062",
+    "pin": "1996",
+    "maxTransactionsPerDay": 10,
+    "locks": [],
+    "accounts": [
+      {
+        "id": 3,
+        "name": "Deborahs Savings",
+        "type": "SAVINGS",
+        "balance": {
+          "total": 5627,
+          "locked": 0,
+          "limit": 9999999999
+        }
+      },
+      {
+        "id": 4,
+        "name": "Mortgage",
+        "type": "LOAN",
+        "balance": {
+          "total": -101090,
+          "locked": 0,
+          "limit": -150000
+        },
+        "hasRedraw": true
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Mr",
+    "firstName": "Todd",
+    "lastName": "Howard",
+    "cardNumber": "2435-6353-8219-5201",
+    "pin": "1234",
+    "maxTransactionsPerDay": 10,
+    "locks": [],
+    "accounts": [
+      {
+        "id": 5,
+        "name": "Todd's Savings",
+        "type": "SAVINGS",
+        "balance": {
+          "total": 32678,
+          "locked": 0,
+          "limit": 9999999999
+        }
+      },
+      {
+        "id": 6,
+        "name": "MasterfulCard",
+        "type": "CREDIT",
+        "balance": {
+          "total": 6534,
+          "locked": 0,
+          "limit": 7000
+        }
+      },
+      {
+        "id": 7,
+        "name": "Personal Loan",
+        "type": "LOAN",
+        "balance": {
+          "total": -5000,
+          "locked": 0,
+          "limit": 0
+        },
+        "hasRedraw": false
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Ms",
+    "firstName": "Ronalda",
+    "lastName": "McDonalda",
+    "cardNumber": "7623-5487-8209-6124",
+    "pin": "5092",
+    "maxTransactionsPerDay": 10,
+    "locks": [],
+    "accounts": [
+      {
+        "id": 8,
+        "name": "Ronalda's Secret Savings",
+        "type": "SAVINGS",
+        "balance": {
+          "total": 99997820,
+          "locked": 0,
+          "limit": 9999999999
+        }
+      },
+      {
+        "id": 9,
+        "name": "Car Loan",
+        "type": "LOAN",
+        "balance": {
+          "total": -1,
+          "locked": 0,
+          "limit": -70000
+        },
+        "hasRedraw": true
+      }
+    ]
+  }
+]
