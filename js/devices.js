@@ -1,4 +1,4 @@
-import { Tools,Sounds } from "/js/tools.js";
+import { Tools,Sounds } from "js/tools.js";
 
 export class ATMCashReader {
   constructor(atm) {
@@ -98,9 +98,7 @@ export class ATMCardReader {
           clearInterval(handle);
           this.red.style.display = "none";
           this.green.style.display = "block";
-          Tools.play(
-            "https://cdn.glitch.com/963c8400-ea6c-4228-9a4d-5f0266e4f1ff%2Fatm-card-sound.mp3?v=1587296440314"
-          ).then(() => resolve(this.card.cardNumber));
+          Tools.play(Sounds.cardreader).then(() => resolve(this.card.cardNumber));
         }
       }, 10);
     })
@@ -133,8 +131,7 @@ export class ATMCardReader {
           clearInterval(handle);
           this.red.style.display = "block";
           this.green.style.display = "none";
-          Tools.play(
-            "https://cdn.glitch.com/963c8400-ea6c-4228-9a4d-5f0266e4f1ff%2Fatm-card-sound.mp3?v=1587296440314").then(resolve);
+          Tools.play(Sounds.cardreader).then(resolve);
         }
       }, 10);
     });
@@ -167,15 +164,11 @@ export class ATMPinReader {
           if (e.keyCode >= 48 && e.keyCode <= 57) {
             this.pin += "" + e.keyCode - 48;
             this.span.innerHTML += "*";
-            Tools.play(
-              "https://cdn.glitch.com/963c8400-ea6c-4228-9a4d-5f0266e4f1ff%2Fatm-button-sound.mp3?v=1587297187955"
-            );
+            Tools.play(Sounds.pinbutton);
           } else if (e.keyCode >= 96 && e.keyCode <= 105) {
             this.pin += "" + e.keyCode - 96;
             this.span.innerHTML += "*";
-            Tools.play(
-              "https://cdn.glitch.com/963c8400-ea6c-4228-9a4d-5f0266e4f1ff%2Fatm-button-sound.mp3?v=1587297187955"
-            );
+            Tools.play(Sounds.pinbutton);
           } else if (e.keyCode == 13) {
             this.span.innerHTML = "";
             Tools.removeEventHandler(handler);

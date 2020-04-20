@@ -1,4 +1,4 @@
-import {Tools} from '/js/tools.js';
+import {Tools} from 'js/tools.js';
 
 class Member {
   constructor(data) {
@@ -126,7 +126,7 @@ export class FinancialHost {
   }
   init() {
     return new Promise((resolve, reject) => {
-      Tools.fetchJSONFile("/json/accounts.json").then(data => {
+      Tools.fetchJSONFile("json/accounts.json").then(data => {
         this.members = data.map(m => new Member(m));
         resolve(this);
     }, reject)});

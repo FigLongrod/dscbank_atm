@@ -1,4 +1,4 @@
-import { Tools } from "/js/tools.js";
+import { Tools } from "js/tools.js";
 
 export class Cards {
   constructor(element, cardreader) {
@@ -19,7 +19,7 @@ export class Cards {
   }
   init() {
     return new Promise((resolve, reject) => {
-      Tools.fetchJSONFile("/json/accounts.json").then(data => {
+      Tools.fetchJSONFile("json/accounts.json").then(data => {
         this.cards = data.map(m => ({
           id: m.id,
           name: m.title + " " + m.firstName + " " + m.lastName,
@@ -43,11 +43,7 @@ export class Cards {
       card.className = "card";
       card.id = "card-" + c.id;
       card.innerHTML =
-        "<img class='card-logo' src='https://cdn.glitch.com/963c8400-ea6c-4228-9a4d-5f0266e4f1ff%2Fdaytona.gif?v=1587368480233'/><h3>" +
-        c.cardNumber +
-        "</h3><h4>" +
-        c.name +
-        "</h4>";
+        `<img class='card-logo' src='media/images/daytona.gif'/><h3>${c.cardNumber}</h3><h4>${c.name}</h4>`;
       this.element.appendChild(card);
       Tools.addEventHandler(
         document.getElementById(card.id),
