@@ -82,67 +82,52 @@ export class ATM {
       }
     );
   }
-  getAccountList() {
-    return this.callAPI("listaccountsbytype", { type: "ALL" }).then(
-      response => {
-        this.session.accounts = response.response.accounts;
-      },
-      response => {
-        this.console.appendLines(["", "Error: " + response.response.error, ""]);
-      }
-    );
+  async getAccountList() {
+    try {
+      const response = await this.callAPI("listaccountsbytype", { type: "ALL" });
+      this.session.accounts = response.response.accounts;
+    }
+    catch (response_1) {
+      this.console.appendLines(["", "Error: " + response_1.response.error, ""]);
+    }
   }
-  accountListHeader() {
+  async accountListHeader() {
     if (this.session.accounts.length > 0) {
-      return this.console
+      await this.console
         .appendLines([
           "",
           "You have " + this.session.accounts.length + " accounts:",
           "",
           ""
-        ])
-        .then(() => this.listAccounts());
+        ]);
+      return await this.listAccounts();
     } else {
-      return this.console
+      await this.console
         .appendLines([
           "",
           "You do not have any accessible accounts.",
           "",
           "Ejecting card. Please take your card."
-        ])
-        .then(() => this.cardreader.ejectCard())
-        .then(() => this.waitForCard());
+        ]);
+      this.cardreader.ejectCard();
+      return this.waitForCard();
     }
   }
-  listAccounts() {
-    return this.console
-      .appendLines(
-        this.session.accounts.map(
-          (a, i) =>
-            i +
-            1 +
-            ": " +
-            a.name +
-            " (" +
-            a.type +
-            "), Balance: " +
-            a.balance.toFixed(2) +
-            ", Available: " +
-            a.available.toFixed(2)
-        )
-      )
-      .then(() => this.accountListFooter());
+  async listAccounts() {
+    await this.console
+      .appendLines(this.session.accounts.map((a, i) => `${i +
+      1}: ${a.name} (${a.type}), Balance: ${a.balance.toFixed(2)}, Available: ${a.available.toFixed(2)}`));
+    return await this.accountListFooter();
   }
-  accountListFooter() {
-    return this.console
+  async accountListFooter() {
+    await this.console
       .appendLines([
         "",
         "",
-        "Please select an account to manage (1 - " +
-          this.session.accounts.length +
-          ", [ESC] to Cancel): "
-      ])
-      .then(() => this.selectAccount().then(() => this.waitForCard()));
+        `Please select an account to manage (1 - ${this.session.accounts.length}, [ESC] to Cancel): `
+      ]);
+    await this.selectAccount();
+    return this.waitForCard();
   }
   selectAccount() {
     return new Promise((resolve, reject) => {
@@ -171,7 +156,7 @@ export class ATM {
               this.console
                 .appendLines([
                   "",
-                  "You selected: " + this.session.accounts[num - 1].name,
+                  `You selected: ${this.session.accounts[num - 1].name}`,
                   ""
                 ])
                 .then(() =>
@@ -225,7 +210,7 @@ export class ATM {
       }
       let prompt =
         "Select an operation: " +
-        options.map((o, i) => "[" + (i + 1) + "] " + o).join(" ") +
+        options.map((o, i) => `[${i + 1}] ${o}`).join(" ") +
         " [ESC] Cancel:";
       this.console.appendLines(["", prompt, ""]).then(() => {
         let handler = Tools.addEventHandler(
@@ -244,7 +229,7 @@ export class ATM {
                     this.console
                       .appendLines([
                         "",
-                        "You selected: Cash Withdrawal from " + account.name
+                        `You selected: Cash Withdrawal from ${account.name}`
                       ])
                       .then(() =>
                         this.runWithdraw(
@@ -259,7 +244,7 @@ export class ATM {
                     this.console
                       .appendLines([
                         "",
-                        "You selected: Funds Transfer from " + account.name
+                        `You selected: Funds Transfer from ${account.name}`
                       ])
                       .then(() => this.runTransfer(account));
                     break;
@@ -268,7 +253,7 @@ export class ATM {
                     this.console
                       .appendLines([
                         "",
-                        "You selected: Cash Deposit to " + account.name
+                        `You selected: Cash Deposit to ${account.name}`
                       ])
                       .then(() => this.runDeposit(account));
                     break;
@@ -302,7 +287,7 @@ export class ATM {
       }
       let prompt =
         "Select an operation: " +
-        options.map((o, i) => "[" + (i + 1) + "] " + o).join(" ") +
+        options.map((o, i) => `[${i + 1}] ${o}`).join(" ") +
         " [ESC] Cancel:";
       this.console.appendLines(["", prompt, ""]).then(() => {
         let handler = Tools.addEventHandler(
@@ -321,7 +306,7 @@ export class ATM {
                     this.console
                       .appendLines([
                         "",
-                        "You selected: Cash Advance from " + account.name
+                        `You selected: Cash Advance from ${account.name}`
                       ])
                       .then(() =>
                         this.runWithdraw(
@@ -336,7 +321,7 @@ export class ATM {
                     this.console
                       .appendLines([
                         "",
-                        "You selected: Make Cash Payment to" + account.name
+                        `You selected: Make Cash Payment to ${account.name}`
                       ])
                       .then(() =>
                         this.runDeposit(account)
@@ -372,7 +357,7 @@ export class ATM {
       }
       let prompt =
         "Select an operation: " +
-        options.map((o, i) => "[" + (i + 1) + "] " + o).join(" ") +
+        options.map((o, i) => `[${i + 1}] ${o}`).join(" ") +
         " [ESC] Cancel:";
       this.console.appendLines(["", prompt, ""]).then(() => {
         let handler = Tools.addEventHandler(
@@ -391,7 +376,7 @@ export class ATM {
                     this.console
                       .appendLines([
                         "",
-                        "You selected: Redraw to Cash from " + account.name
+                        `You selected: Redraw to Cash from ${account.name}`
                       ])
                       .then(() =>
                         this.runWithdraw(
@@ -406,7 +391,7 @@ export class ATM {
                     this.console
                       .appendLines([
                         "",
-                        "You selected: Redraw Transfer from " + account.name
+                        `You selected: Redraw Transfer from ${account.name}`
                       ])
                       .then(() =>
                         this.runTransfer(account)
@@ -417,7 +402,7 @@ export class ATM {
                     this.console
                       .appendLines([
                         "",
-                        "You selected: Make Cash Payment to " + account.name
+                        `You selected: Make Cash Payment to ${account.name}`
                       ])
                       .then(() =>
                         this.runDeposit(account)
@@ -447,9 +432,6 @@ export class ATM {
           if (val >= 0 && val <= 9) {
             input += val;
             this.console.writeChar(val, true);
-          } else if (e.key == "." && input.indexOf(".") < 0) {
-            input += ".";
-            this.console.writeChar(".", true);
           } else if (e.keyCode == 13) {
             Tools.removeEventHandler(handle);
             resolve(input);
@@ -481,7 +463,7 @@ export class ATM {
     });
   }
   runWithdraw(action, account, max) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       max = max > 500 ? 500 : max;
       this.console
         .appendLines([
@@ -510,12 +492,12 @@ export class ATM {
                               account.total = response.response.balance.total;
                               account.available = response.response.balance.available;
                               account.limit = response.response.balance.limit;
-                              this.console.appendLines(["", "Cash dispensed. Receipt No: " + response.response.receipt_no, ""]).then(resolve);
+                              this.console.appendLines(["", `Cash dispensed. Receipt No: ${response.response.receipt_no}`, "", ""]).then(resolve);
                             }, response => {
-                              this.console.appendLines(["","Error:" + response.response.error, ""]).then(resolve);
+                              this.console.appendLines(["",`Error:${response.response.error}`, ""]).then(resolve);
                             });
                           }, amount => {
-                             this.console.appendLines(["", "Cash dispensing failed, only " + amount.toFixed(2) + " could be dispensed","Please attend a branch to arrange release of locked funds", ""]).then(resolve);
+                             this.console.appendLines(["", `Cash dispensing failed, only ${amount.toFixed(2)} could be dispensed`,"Please attend a branch to arrange release of locked funds", ""]).then(resolve);
                           });
                         } else {
                           this.console.appendLines(["","Could not lock funds for withdrawal: " + response.response.error, ""]).then(resolve);
@@ -560,7 +542,7 @@ export class ATM {
           .waitForCard()
           .then(cardnumber =>
             this.console
-              .appendLines(["", "Card number: " + cardnumber, ""])
+              .appendLines(["", `Card number: ${cardnumber}`, ""])
               .then(() => this.waitForPIN(cardnumber))
           )
       );
