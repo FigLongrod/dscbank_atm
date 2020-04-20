@@ -99,5 +99,5 @@ div.note {
   position: absolute;
   top: 0px;
   left: 0px;
-  background-image: url('/media/images/money.jpg');
+  background-image: url('./media/images/money.jpg');
 }
