@@ -44,7 +44,6 @@ export class ATM {
     console.log("Manufacturing new ATM");
     this.console = new ATMConsole(consoleElement);
     this.dispenser = new ATMCashDispenser(dispenserElement);
-    this.dispenser.dispense("50");
     this.cardreader = new ATMCardReader(cardreaderElement);
     this.reader = new ATMCashReader();
     this.pinreader = new ATMPinReader(pinreaderElement);

@@ -100,8 +100,8 @@ div#dispenser {
   width: 184px;
   margin: 0;
   background-color: black;
-  border: 1px solid black;
-  margin-left: 10px;
+  border: 3px ridge darkgray;
+  margin-left: 18px;
 }
 div.note {
   position: absolute;
