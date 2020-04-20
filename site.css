@@ -96,15 +96,46 @@ img.card-logo {
     z-index: 1;
 }
 div#dispenser {
-  height: 70px;
-  width: 163px;
+  height: 90px;
+  width: 184px;
+  margin: 0;
+  background-color: black;
+  border: 1px solid black;
+  margin-left: 10px;
 }
 div.note {
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 10px;
+  left: 10px;
   background-image: url(./media/images/money.jpg);
   background-size: 50% 50%;
   height: 70px;
   width: 163px;
+  background-position: 50%;
+}
+div.note-100 {
+
+}
+
+div.note-50 {
+
+}
+
+div.note-20 {
+
+}
+
+div.note-10 {
+
+}
+
+div.note-5 {
+
+}
+div.note-2 {
+
+}
+
+div.note-1 {
+
 }
