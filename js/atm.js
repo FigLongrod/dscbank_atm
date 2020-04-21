@@ -443,20 +443,21 @@ export class ATM {
     do {
       await this.console.display("DSC Bank of Daytona - Your Education, Our Money", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", `Automatch Teller Machine#: ${this.id}`, "", "Please insert your membership card to begin...", "");
       let cardnumber = await this.cardreader.waitForCard();
+      this.session = {
+        cardnumber: cardnumber,
+        session_id: new Date().getTime() + "_SESSION"
+      };
       await this.console.appendLines(["", `Card number: ${cardnumber}`, ""]);
     }
-    while (!this.waitForPIN(cardnumber));
+    while (!this.waitForPIN());
   }
-  async waitForPIN(cardnumber) {
+  async waitForPIN() {
     while (true){
       await this.console.appendLines("", "Please enter your personal identification number (PIN), [ESC] to cancel, [ENTER] to confirm.", "");
       let pin = await this.pinreader.waitForPIN();
-      this.session = {
-        session_id: new Date().getTime() + "_SESSION"
-      };
       try
       {
-        let response = this.callAPI("authenticatebycard", { card_number: cardnumber, pin: pin });
+        let response = this.callAPI("authenticatebycard", { card_number: this.session.cardnumber, pin: pin });
         if (response.response.result === "success") {
           this.session.valid_to = response.response.valid_to;
           this.session.name = response.response.name;
