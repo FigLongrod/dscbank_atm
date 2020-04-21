@@ -55,7 +55,7 @@ export class ATM {
   async init() {
     await Tools.play(Sounds.startup);
     await this.host.init();
-    while(true) {
+    while (true) {
       await this.waitForCard();
     }
   }
@@ -414,8 +414,7 @@ export class ATM {
                 }
                 catch (response) {
                   await this.console.appendLines(`¶¶Error:${response.response.error}¶`);
-                  try
-                  {
+                  try {
                     let response2 = await this.callAPI("releasewithdrawal", { lock_id: lock });
                     account.total = response2.response.balance.total;
                     account.available = response2.response.balance.available;
@@ -454,85 +453,87 @@ export class ATM {
     // we have two considerations for a transfer - the max we can take from the source account, and the max we can deposit to the destination account
     // we only allow the smaller of the two.
     // first we need to get the user to select a destination account valid for this source account
+    let response = null;
     try {
-      let response = await this.callAPI("listaccountsforoperation", { source_id: account.account_id, operation: "TRANSFER"});
-      if (response.response.accounts.length < 1) {
-        await this.console.appendLines("¶Error: There are no valid target accounts to transfer to.¶");
-        return;
-      } else {
-        await this.console.appendLines("¶Please select a destination account:¶");
-        await this.console.appendLines(`¶${response.response.accounts.map((a,i) => `[${i+1}] ${a.name}`).join('¶')}¶`);
-        let destination = null;
-        while(!destination) {
-          let key = await this.readKey(`¶Select account (1 - ${response.response.accounts.length}, [ESC] to cancel)`, response.response.accounts.map((a, i) => (i + 1)).join(''), true);
-          if (key == 27) {
-            await this.console.appendLines("¶Canceled.¶");
-            return;
-          }
-          let num = Number(key);
-          if (num > 0 && num <= response.response.accounts.length) {
-            destination = this.session.accounts.filter(a => a.account_id == response.resolve.accounts[num-1].account_id);
-            if (destination.length < 1) {
-              destinationm = response.resolve.accounts[num-1];
-              this.session.accounts.push(destination);
-            } else {
-              destination = destination[0];
-            }
-          } else {
-            await this.console.appendLines("¶Invalid account selection¶");
-            await Tools.play(Sounds.error);
-          }
-        }
-        // now we have both accounts, we need to determine the maximum transfer amount
-        let destMax = 0;
-        switch(destination.type) {
-          case "SAVINGS":
-            destMax = destination.limit - destination.total;
-            break;
-          case "CREDIT":
-            destMax = destination.limit - destination.total;
-            break;
-          case "LOAN":
-            destMax = -1 * (destination.limit + destination.total);
-            break;
-        }
-        max = destMax < max ? max : destMax;
-        let amount = this.readAmount(`¶Please enter an amount (max: ${max.toFixed(2)}): `);
-        switch(await this.readKey(`¶${action} ${amount.toFixed} from ${account.name} to ${destination.name}? (Y/N): `, "YNyn", false)) {
-          case "N":
-          case "n":
-              await this.console.appendLines("¶Canceled.¶");
-            return;
-          case "Y":
-          case "y":
-            // perform transfer
-            try {
-              let response3 = await this.callAPI("transferfunds", { source_id: account.account_id, destination_id: destination.account_id, amount: amount });
-              if (response3.response.result == "success") {
-                account.total = response.response.source.balance.total;
-                account.available = response.response.source.balance.available;
-                account.limit = response.response.source.balance.limit;
-                destination.total = response.response.destination.balance.total;
-                destination.available = response.response.destination.balance.available;
-                destination.limit = response.response.destination.balance.limit;
-                await this.appendLines(`¶${action} complete. Receipt No: ${response.response.receipt_no}¶`);
-                return;
-              }
-            }
-            catch(response) {
-              await this.appendLines(`¶Error: ${response.response.error}¶`);
-              return;
-            }
-          default:
-            await Tools.play(Sounds.error);
-            return;
-        }
-      }
+      response = await this.callAPI("listaccountsforoperation", { source_id: account.account_id, operation: "TRANSFER" });
     }
-    catch(response) {
+    catch () {
       await this.console.appendLines("¶Could not retrieve list of target accounts¶");
       return;
     }
+    if (response.response.accounts.length < 1) {
+      await this.console.appendLines("¶Error: There are no valid target accounts to transfer to.¶");
+      return;
+    } else {
+      await this.console.appendLines("¶Please select a destination account:¶");
+      await this.console.appendLines(`¶${response.response.accounts.map((a, i) => `[${i + 1}] ${a.name}`).join('¶')}¶`);
+      let destination = null;
+      while (!destination) {
+        let key = await this.readKey(`¶Select account (1 - ${response.response.accounts.length}, [ESC] to cancel)`, response.response.accounts.map((a, i) => (i + 1)).join(''), true);
+        if (key == 27) {
+          await this.console.appendLines("¶Canceled.¶");
+          return;
+        }
+        let num = Number(key);
+        if (num > 0 && num <= response.response.accounts.length) {
+          destination = this.session.accounts.filter(a => a.account_id == response.resolve.accounts[num - 1].account_id);
+          if (destination.length < 1) {
+            destinationm = response.resolve.accounts[num - 1];
+            this.session.accounts.push(destination);
+          } else {
+            destination = destination[0];
+          }
+        } else {
+          await this.console.appendLines("¶Invalid account selection¶");
+          await Tools.play(Sounds.error);
+        }
+      }
+      // now we have both accounts, we need to determine the maximum transfer amount
+      let destMax = 0;
+      switch (destination.type) {
+        case "SAVINGS":
+          destMax = destination.limit - destination.total;
+          break;
+        case "CREDIT":
+          destMax = destination.limit - destination.total;
+          break;
+        case "LOAN":
+          destMax = -1 * (destination.limit + destination.total);
+          break;
+      }
+      max = destMax < max ? max : destMax;
+      let amount = this.readAmount(`¶Please enter an amount (max: ${max.toFixed(2)}): `);
+      switch (await this.readKey(`¶${action} ${amount.toFixed} from ${account.name} to ${destination.name}? (Y/N): `, "YNyn", false)) {
+        case "N":
+        case "n":
+          await this.console.appendLines("¶Canceled.¶");
+          return;
+        case "Y":
+        case "y":
+          // perform transfer
+          try {
+            let response3 = await this.callAPI("transferfunds", { source_id: account.account_id, destination_id: destination.account_id, amount: amount });
+            if (response3.response.result == "success") {
+              account.total = response.response.source.balance.total;
+              account.available = response.response.source.balance.available;
+              account.limit = response.response.source.balance.limit;
+              destination.total = response.response.destination.balance.total;
+              destination.available = response.response.destination.balance.available;
+              destination.limit = response.response.destination.balance.limit;
+              await this.appendLines(`¶${action} complete. Receipt No: ${response.response.receipt_no}¶`);
+              return;
+            }
+          }
+          catch (response) {
+            await this.appendLines(`¶Error: ${response.response.error}¶`);
+            return;
+          }
+        default:
+          await Tools.play(Sounds.error);
+          return;
+      }
+    }
+
   }
   async runDeposit(account) {
     return new Promise((resolve, reject) => { });
