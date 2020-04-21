@@ -111,11 +111,10 @@ export class ATMCardReader {
     return await new Promise(resolve => {
       let handle = setInterval(() => {
         if (this.hasCard) {
-          clearInterval(handle);
           this.red.style.display = "none";
-          this.green.style.display = "block";
-          await Tools.play(Sounds.pinbutton);
-          return this.card.cardNumber;
+          this.green.style.display = "block";  
+          clearInterval(handle);
+          Tools.play(Sounds.pinbutton).then(() => resolve(this.card.cardNumber));
         }
       }, 10);
     })
