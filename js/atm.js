@@ -121,7 +121,7 @@ export class ATM {
     }
   }
   async runEjectCard(reason) {
-    await this.console.appendLines(reason, "", "");
+    await this.console.appendLines(`${reason}\`\``);
     await this.console.appendLines("Ejecting card. Please take your card.")
     await this.cardreader.ejectCard();
     await this.cardreader.waitForTakeCard();
@@ -142,7 +142,7 @@ export class ATM {
   }
   async accountListHeader() {
     if (this.session.accounts.length > 0) {
-      await this.console.appendLines("", `You have ${this.session.accounts.length} accounts:`, "", "");
+      await this.console.appendLines(`\`You have ${this.session.accounts.length} accounts:\`\``);
     } else {
       throw "You do not have any accessible accounts.";
     }
@@ -153,13 +153,13 @@ export class ATM {
 
   async selectAccount() {
     while (true) {
-      let key = await this.readKey(`Please select an account to manage (1 - ${this.session.accounts.length}, [ESC] to Cancel): `, this.session.accounts.map((a, i) => (i + 1)).join(""), true);
+      let key = await this.readKey(`\`Please select an account to manage (1 - ${this.session.accounts.length}, [ESC] to Cancel): `, this.session.accounts.map((a, i) => (i + 1)).join(""), true);
       if (key == 27) {
         throw "Cancel.";
       } else {
         let num = Number(e.key);
         if (num > 0 && num <= this.session.accounts.length) {
-          await this.console.appendLines(["", `You selected: ${this.session.accounts[num - 1].name}`, ""]);
+          await this.console.appendLines(`\`You selected: ${this.session.accounts[num - 1].name}\``);
           return this.session.accounts[num - 1];
         } else {
           Tools.play(Sounds.error);
