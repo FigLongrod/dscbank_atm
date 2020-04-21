@@ -105,7 +105,7 @@ class Account {
     return { result: "LOCK_NOT_FOUND" };
   }
   transfer(destination, amount) {
-    let test = this.canWidthdraw(amount);
+    let test = this.canWithdraw(amount);
     if (test == "OKAY" || test == "LIMIT_EXCEEDED") {
       this.balance.total -= amount;
       destination.deposit(amount);
