@@ -275,7 +275,7 @@ export class ATM {
   }
   async runManageLoan(account) {
     let options = [];
-    if (account.hasRedraw && account.limit < account.total) {
+    if (account.hasRedraw && account.available) {
       options.push("Redraw Cash");
       options.push("Redraw Transfer");
     }
@@ -298,11 +298,11 @@ export class ATM {
         switch (options[num - 1]) {
           case "Redraw Cash":
             await this.console.appendLines(`¶¶You selected: Redraw Cash from ${account.name}¶`);
-            await this.runWithdraw("Redraw Cash", account, -(account.limit - account.available));
+            await this.runWithdraw("Redraw Cash", account, account.available);
             return;
           case "Redraw Transfer":
             await this.console.appendLines(`¶¶You selected: Redraw Transfer from ${account.name}¶`);
-            await this.runTransfer("Redraw Transfer", account, -(account.limit - account.available));
+            await this.runTransfer("Redraw Transfer", account, account.available);
             return;
           case "Cash Payment":
             await this.console.appendLines(`¶¶You selected: Cash Payment to ${account.name}¶`);
