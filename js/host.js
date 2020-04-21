@@ -213,6 +213,7 @@ export class FinancialHost {
               failure_count: member.failedAttempts
             })
           );
+          return;
         }
         reject(
           this.error(
@@ -221,6 +222,7 @@ export class FinancialHost {
             "This card does not belong to a member of DSC Bank Daytona"
           )
         );
+        return;
       }
       if (!request.system.session_id) {
         reject(
@@ -231,6 +233,7 @@ export class FinancialHost {
             "Invalid request submitted, ensure system terminal_id and request payload are included and payload includes api call"
           )
         );
+        return;
       }
 
       if (!this.sessions[request.system.session_id]) {
@@ -241,6 +244,7 @@ export class FinancialHost {
             "No session exists for the specified session id"
           )
         );
+        return;
       }
       let account = null;
       let result = null;
@@ -256,6 +260,7 @@ export class FinancialHost {
             "The session references a non-existent member"
           )
         );
+        return;
       }
       member = member[0];
       let mapAccount = a => ({
@@ -290,6 +295,7 @@ export class FinancialHost {
                 .map(mapAccount)
             })
           );
+          return;
         case "listaccountsforoperation":
           if (!request.request.operation) {
             reject(
@@ -299,6 +305,7 @@ export class FinancialHost {
                 "An operation was not specified"
               )
             );
+            return;
           }
           switch (request.request.operation.toLowerCase()) {
             case "transfer":
@@ -313,6 +320,7 @@ export class FinancialHost {
                     "The specified source account does not exist or is not accessible to the member"
                   )
                 );
+                return;
               }
               source = source[0];
               if (source.type == "LOAN" && !source.hasRedraw) {
@@ -323,6 +331,7 @@ export class FinancialHost {
                     "Cannot transfer from loan accounts without redraw facilities"
                   )
                 );
+                return;
               }
               resolve(
                 this.response(request, {
@@ -330,6 +339,7 @@ export class FinancialHost {
                   accounts: member.accounts.filter(a => a.id !== source.id && !(a.type == "LOAN" && a.balance.total == 0)).map(mapAccount)
                 })
               );
+              return;
             case "deposit":
               resolve(
                 this.response(request, {
@@ -337,6 +347,7 @@ export class FinancialHost {
                   accounts: member.accounts.filter(a => !(a.type == "LOAN" && a.balance.total == 0)).map(mapAccount)
                 })
               );
+              return;
             case "withdraw":
               resolve(
                 this.response(request, {
@@ -346,6 +357,7 @@ export class FinancialHost {
                   )
                 })
               );
+              return;
             default:
               reject(
                 this.error(
@@ -354,12 +366,14 @@ export class FinancialHost {
                   "The specified operation is not valid"
                 )
               );
+              return;
           }
         case "accountbalance":
           if (!request.request.account_id) {
             reject(
               this.error(request, "INVALID_ACCOUNT", "No account specified")
             );
+            return;
           }
           account = member.accounts.filter(
             a => a.id == request.request.account_id
@@ -372,6 +386,7 @@ export class FinancialHost {
                 "The specified account does not exist or is not accessible to the member"
               )
             );
+            return;
           }
           account = account[0];
           resolve(
@@ -384,8 +399,9 @@ export class FinancialHost {
                 limit: account.balance.limit,
                 pending: 0
               }
-            })
+            })            
           );
+          return;
         case "authorizewithdrawal":
           if (member.canTransact() !== "OKAY") {
             reject(
@@ -395,11 +411,13 @@ export class FinancialHost {
                 "The member has already performed the maximum number of transactions today"
               )
             );
+            return;
           }
           if (!request.request.account_id) {
             reject(
               this.error(request, "INVALID_ACCOUNT", "No account specified")
             );
+            return;
           }
           account = member.accounts.filter(
             a => a.id == request.request.account_id
@@ -412,6 +430,7 @@ export class FinancialHost {
                 "The specified account does not exist or is not accessible to the member"
               )
             );
+            return;
           }
           account = account[0];
           if (isNaN(request.request.amount) || request.request.amount <= 0) {
@@ -422,6 +441,7 @@ export class FinancialHost {
                 "Authorize amount must be greater than 0"
               )
             );
+            return;
           }
           result = account.lock(request.request.amount);
           if (result.id > 0) {
@@ -446,6 +466,7 @@ export class FinancialHost {
               "Failed to authorize requested funds"
             )
           );
+          return;
         case "applywithdrawal":
           if (member.canTransact() !== "OKAY") {
             reject(
@@ -455,6 +476,7 @@ export class FinancialHost {
                 "The member has already performed the maximum number of transactions today"
               )
             );
+            return;
           }
           if (isNaN(request.request.lock_id)) {
             reject(
@@ -464,6 +486,7 @@ export class FinancialHost {
                 "A lock to apply was not specified"
               )
             );
+            return;
           }
           account = member.accounts.filter(
             a => a.locks.filter(l => l.id == request.request.lock_id).length > 0
@@ -476,6 +499,7 @@ export class FinancialHost {
                 "The specified lock does not exist"
               )
             );
+            return;
           }
           account = account[0];
           result = account.apply(request.request.lock_id);
@@ -499,6 +523,7 @@ export class FinancialHost {
                 receipt_no: receiptNo
               })
             );
+            return;
           }
           reject(
             this.error(
@@ -507,6 +532,7 @@ export class FinancialHost {
               "Failed to apply the specified lock"
             )
           );
+          return;
         case "releasewithdrawal":
           if (isNaN(request.request.lock_id)) {
             reject(
@@ -516,6 +542,7 @@ export class FinancialHost {
                 "A lock to apply was not specified"
               )
             );
+            return;
           }
           account = member.accounts.filter(
             a => a.locks.filter(l => l.id == request.request.lock_id).length > 0
@@ -528,6 +555,7 @@ export class FinancialHost {
                 "The specified lock does not exist"
               )
             );
+            return;
           }
           account = account[0];
           result = account.release(request.request.lock_id);
@@ -544,10 +572,12 @@ export class FinancialHost {
                 }
               })
             );
+            return;
           }
           reject(
             this.error(request, result, "Failed to release the specified lock")
           );
+          return;
         case "transferfunds":
           if (member.canTransact() !== "OKAY") {
             reject(
@@ -557,6 +587,7 @@ export class FinancialHost {
                 "The member has already performed the maximum number of transactions today"
               )
             );
+            return;
           }
           let source = member.accounts.filter(
             a => a.id == request.request.source_id
@@ -569,6 +600,7 @@ export class FinancialHost {
                 "The specified source account does not exist or is not accessible to the member"
               )
             );
+            return;
           }
           source = source[0];
           if (source.type == "LOAN" && !source.hasRedraw) {
@@ -579,6 +611,7 @@ export class FinancialHost {
                 "Cannot transfer from loan accounts without redraw facilities"
               )
             );
+            return;
           }
           let destination = member.accounts.filter(
             a => a.id == request.request.destination_id
@@ -591,6 +624,7 @@ export class FinancialHost {
                 "The specified destination account does not exist or is not accessible to the member"
               )
             );
+            return;
           }
           destination = destination[0];
           if (isNaN(request.request.amount) || request.request.amount <= 0) {
@@ -601,6 +635,7 @@ export class FinancialHost {
                 "Authorize amount must be greater than 0"
               )
             );
+            return;
           }
           result = source.transfer(destination, request.request.amount);
           if (result == "OKAY") {
@@ -631,6 +666,7 @@ export class FinancialHost {
                 receipt_no: receiptNo
               })
             );
+            return;
           } else {
             reject(
               this.error(
@@ -639,6 +675,7 @@ export class FinancialHost {
                 "Failed to perform funds transfer, no changes have been made"
               )
             );
+            return;
           }
         case "depositfunds":
           if (member.canTransact() !== "OKAY") {
@@ -649,11 +686,13 @@ export class FinancialHost {
                 "The member has already performed the maximum number of transactions today"
               )
             );
+            return;
           }
           if (!request.request.account_id) {
             reject(
               this.error(request, "INVALID_ACCOUNT", "No account specified")
             );
+            return;
           }
           account = member.accounts.filter(
             a => a.id == request.request.account_id
@@ -666,6 +705,7 @@ export class FinancialHost {
                 "The specified account does not exist or is not accessible to the member"
               )
             );
+            return;
           }
           if (isNaN(request.request.amount) || request.request.amount <= 0) {
             reject(
@@ -675,6 +715,7 @@ export class FinancialHost {
                 "Deposit amount must be greater than 0"
               )
             );
+            return;
           }
           result = account.deposit(request.request.amount);
           if (result == "OKAY") {
@@ -697,6 +738,10 @@ export class FinancialHost {
                 receipt_no: receiptNo
               })
             );
+            return;
+          } else {
+            reject(this.error(request, result, 'Failed to deposit cash funds'));
+            return;
           }
         case "teardownsession":
           delete this.sessions[request.system.session_id];
@@ -705,6 +750,7 @@ export class FinancialHost {
               result: "success"
             })
           );
+          return;
         default:
           reject(
             this.error(
@@ -713,6 +759,7 @@ export class FinancialHost {
               "The requested API function is invalid"
             )
           );
+          return;
       }
     });
   }
