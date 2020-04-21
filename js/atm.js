@@ -233,155 +233,94 @@ export class ATM {
     }
   }
   async runManageCredit(account) {
-    // return new Promise((resolve, reject) => {
-    //   let options = [];
-    //   if (account.available > 0) {
-    //     options.push("Cash Advance");
-    //   }
-    //   if (account.available < account.limit) {
-    //     options.push("Make Cash Payment");
-    //   }
-    //   if (options.length < 1) {
-    //     this.console
-    //       .appendLines(["", "This account has no viable operations."])
-    //       .then(resolve);
-    //     return;
-    //   }
-    //   let prompt =
-    //     "Select an operation: " +
-    //     options.map((o, i) => `[${i + 1}] ${o}`).join(" ") +
-    //     " [ESC] Cancel:";
-    //   this.console.appendLines(["", prompt, ""]).then(() => {
-    //     let handler = Tools.addEventHandler(
-    //       document,
-    //       "keyup",
-    //       e => {
-    //         if (e.keyCode == 27) {
-    //           Tools.removeEventHandler(handler);
-    //           this.console.appendLines(["", "Cancel."]).then(reject);
-    //         } else {
-    //           let num = Number(e.key);
-    //           if (num > 0 && num <= options.length) {
-    //             switch (options[num - 1]) {
-    //               case "Cash Advance":
-    //                 Tools.removeEventHandler(handler);
-    //                 this.console
-    //                   .appendLines([
-    //                     "",
-    //                     `You selected: Cash Advance from ${account.name}`
-    //                   ])
-    //                   .then(() =>
-    //                     this.runWithdraw(
-    //                       "Cash Advance",
-    //                       account,
-    //                       account.available
-    //                     )
-    //                   );
-    //                 break;
-    //               case "Make Cash Payment":
-    //                 Tools.removeEventHandler(handler);
-    //                 this.console
-    //                   .appendLines([
-    //                     "",
-    //                     `You selected: Make Cash Payment to ${account.name}`
-    //                   ])
-    //                   .then(() =>
-    //                     this.runDeposit(account)
-    //                   );
-    //                 break;
-    //               default:
-    //                 Tools.play(Sounds.error);
-    //             }
-    //           } else {
-    //             Tools.play(Sounds.error);
-    //           }
-    //         }
-    //       },
-    //       this
-    //     );
-    //   });
-    // });
+    let options = [];
+    if (account.available > 0) {
+      options.push("Cash Advance");
+      options.push("Funds Transfer");
+    }
+    if (account.total < account.limit) {
+      options.push("Cash Deposit");
+    }
+    if (options.length < 1) {
+      this.console
+        .appendLines("¶This account has no viable operations.¶")
+        .then(resolve);
+      return;
+    }
+    let prompt = `Select an operation: ${options.map((o, i) => `[${i + 1}] ${o}`).join(" ")} [ESC] Cancel:`;
+    while (true) {
+      let key = await this.readKey(prompt, options.map((o, i) => i + 1).join(""), true);
+      if (key == 27) {
+        await this.console.appendLines("¶¶Cancel.¶");
+        return;
+      }
+      let num = Number(key);
+      if (num > 0 && num <= options.length) {
+        switch (options[num - 1]) {
+          case "Cash Advance":
+            await this.console.appendLines(`¶¶You selected: Cash Advance from ${account.name}¶`);
+            await this.runWithdraw("Cash Advance", account, account.available);
+            return;
+          case "Funds Transfer":
+            await this.console.appendLines(`¶¶You selected: Funds Transfer from ${account.name}¶`);
+            await this.runTransfer("Funds Transfer", account, account.available);
+            return;
+          case "Cash Deposit":
+            await this.console.appendLines(`¶¶You selected: Cash Deposit to ${account.name}¶`);
+            await this.runDeposit("Cash Deposit", account, account.limit - account.total);
+            return;
+          default:
+            Tools.play(Sounds.error);
+        }
+      } else {
+        Tools.play(Sounds.error);
+      }
+    }
   }
   async runManageLoan(account) {
-    // return new Promise((resolve, reject) => {
-    //   let options = [];
-    //   if (account.hasRedraw && account.balance > account.limit) {
-    //     options.push("Redraw to Cash");
-    //     options.push("Redraw Transfer");
-    //   } else if (account.balance < 0) {
-    //     options.push("Make Cash Payment");
-    //   }
-    //   if (options.length < 1) {
-    //     this.console
-    //       .appendLines(["", "This account has no viable operations."])
-    //       .then(resolve);
-    //     return;
-    //   }
-    //   let prompt =
-    //     "Select an operation: " +
-    //     options.map((o, i) => `[${i + 1}] ${o}`).join(" ") +
-    //     " [ESC] Cancel:";
-    //   this.console.appendLines(["", prompt, ""]).then(() => {
-    //     let handler = Tools.addEventHandler(
-    //       document,
-    //       "keyup",
-    //       e => {
-    //         if (e.keyCode == 27) {
-    //           Tools.removeEventHandler(handler);
-    //           this.console.appendLines(["", "Cancel."]).then(() => reject);
-    //         } else {
-    //           let num = Number(e.key);
-    //           if (num > 0 && num <= options.length) {
-    //             switch (options[num - 1]) {
-    //               case "Redraw to Cash":
-    //                 Tools.removeEventHandler(handler);
-    //                 this.console
-    //                   .appendLines([
-    //                     "",
-    //                     `You selected: Redraw to Cash from ${account.name}`
-    //                   ])
-    //                   .then(() =>
-    //                     this.runWithdraw(
-    //                       "Redraw Cash",
-    //                       account,
-    //                       account.limit - account.balance
-    //                     ).then(resolve, reject)
-    //                   );
-    //                 break;
-    //               case "Redraw Transfer":
-    //                 Tools.removeEventHandler(handler);
-    //                 this.console
-    //                   .appendLines([
-    //                     "",
-    //                     `You selected: Redraw Transfer from ${account.name}`
-    //                   ])
-    //                   .then(() =>
-    //                     this.runTransfer(account)
-    //                   );
-    //                 break;
-    //               case "Make Cash Payment":
-    //                 Tools.removeEventHandler(handler);
-    //                 this.console
-    //                   .appendLines([
-    //                     "",
-    //                     `You selected: Make Cash Payment to ${account.name}`
-    //                   ])
-    //                   .then(() =>
-    //                     this.runDeposit(account)
-    //                   );
-    //                 break;
-    //               default:
-    //                 Tools.play(Sounds.error);
-    //             }
-    //           } else {
-    //             Tools.play(Sounds.error);
-    //           }
-    //         }
-    //       },
-    //       this
-    //     );
-    //   });
-    // });
+    let options = [];
+    if (account.hasRedraw && account.limit < account.total) {
+      options.push("Redraw Cash");
+      options.push("Redraw Transfer");
+    }
+    if (account.total < 0) {
+      options.push("Cash Payment");
+    }
+    if (options.length < 1) {
+      this.console
+        .appendLines("¶This account has no viable operations.¶")
+        .then(resolve);
+      return;
+    }
+    let prompt = `Select an operation: ${options.map((o, i) => `[${i + 1}] ${o}`).join(" ")} [ESC] Cancel:`;
+    while (true) {
+      let key = await this.readKey(prompt, options.map((o, i) => i + 1).join(""), true);
+      if (key == 27) {
+        await this.console.appendLines("¶¶Cancel.¶");
+        return;
+      }
+      let num = Number(key);
+      if (num > 0 && num <= options.length) {
+        switch (options[num - 1]) {
+          case "Redraw Cash":
+            await this.console.appendLines(`¶¶You selected: Redraw Cash from ${account.name}¶`);
+            await this.runWithdraw("Redraw Cash", account, -(account.limit - account.available));
+            return;
+          case "Redraw Transfer":
+            await this.console.appendLines(`¶¶You selected: Redraw Transfer from ${account.name}¶`);
+            await this.runTransfer("Redraw Transfer", account, -(account.limit - account.available));
+            return;
+          case "Cash Payment":
+            await this.console.appendLines(`¶¶You selected: Cash Payment to ${account.name}¶`);
+            await this.runDeposit("Cash Payment", account, -account.total);
+            return;
+          default:
+            Tools.play(Sounds.error);
+        }
+      } else {
+        Tools.play(Sounds.error);
+      }
+    }
   }
   async runWithdraw(action, account, max) {
     max = max > 500 ? 500 : max;

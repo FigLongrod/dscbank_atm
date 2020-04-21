@@ -77,7 +77,7 @@ export class ATMCashDispenser {
     remaining = await this.issueNotes(remaining, "20");
     remaining = await this.issueNotes(remaining, "10");
     remaining = await this.issueNotes(remaining, "5");
-    remaining = await this.issueNotes(remaining, "20");
+    remaining = await this.issueNotes(remaining, "2");
     remaining = await this.issueNotes(remaining, "1");
     if (remaining > 0) {
       throw remaining;
