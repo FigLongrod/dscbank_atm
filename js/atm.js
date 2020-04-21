@@ -432,13 +432,13 @@ export class ATM {
       }
     }
   }
-  runTransfer(account) {
+  async runTransfer(account) {
     return new Promise((resolve, reject) => { });
   }
-  runDeposit(account) {
+  async runDeposit(account) {
     return new Promise((resolve, reject) => { });
   }
-  waitForCard() {
+  async waitForCard() {
     do {
       await this.console.display("DSC Bank of Daytona - Your Education, Our Money", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", `Automatch Teller Machine#: ${this.id}`, "", "Please insert your membership card to begin...", "");
       let cardnumber = await this.cardreader.waitForCard();
