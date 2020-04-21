@@ -457,7 +457,7 @@ export class ATM {
     try {
       response = await this.callAPI("listaccountsforoperation", { source_id: account.account_id, operation: "TRANSFER" });
     }
-    catch () {
+    catch {
       await this.console.appendLines("¶Could not retrieve list of target accounts¶");
       return;
     }
