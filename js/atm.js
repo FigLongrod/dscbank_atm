@@ -414,7 +414,20 @@ export class ATM {
                 }
                 catch (response) {
                   await this.console.appendLines(`¶¶Error:${response.response.error}¶`);
-                  return;
+                  try
+                  {
+                    let response2 = await this.callAPI("releasewithdrawal", { lock_id: lock });
+                    account.total = response2.response.balance.total;
+                    account.available = response2.response.balance.available;
+                    account.limit = response2.response.balance.limit;
+                    await this.console.appendLines("¶¶Reserved funds released.¶");
+                    return;
+                  }
+                  catch
+                  {
+                    await this.console.appendLines(`¶¶Reserved funds could not be released¶Please attend a branch to arrange release of locked funds¶`);
+                    return;
+                  }
                 }
               }
               catch (amount) {

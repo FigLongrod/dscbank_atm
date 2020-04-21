@@ -535,7 +535,7 @@ export class FinancialHost {
             );
           }
           reject(
-            this.error(request, result, "Failed to release the specifeid lock")
+            this.error(request, result, "Failed to release the specified lock")
           );
         case "transferfunds":
           if (member.canTransact() !== "OKAY") {
