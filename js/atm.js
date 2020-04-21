@@ -279,7 +279,7 @@ export class ATM {
       options.push("Redraw Cash");
       options.push("Redraw Transfer");
     }
-    if (account.total < 0) {
+    if (account.balance < 0) {
       options.push("Cash Payment");
     }
     if (options.length < 1) {
@@ -306,7 +306,7 @@ export class ATM {
             return;
           case "Cash Payment":
             await this.console.appendLines(`¶¶You selected: Cash Payment to ${account.name}¶`);
-            await this.runDeposit("Cash Payment", account, -account.total);
+            await this.runDeposit("Cash Payment", account, -account.balance);
             return;
           default:
             Tools.play(Sounds.error);
