@@ -11,3 +11,4 @@ let atm = new ATM(
 );
 let cards = new Cards(document.getElementById("cards"), atm.cardreader);
 cards.init().then(() => cards.draw());
+atm.init();
