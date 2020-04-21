@@ -210,9 +210,10 @@ class Receipt {
     this.div.className = "receipt";
     this.div.innerHTML = `<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
     let handle = Tools.addEventHandler(this.div, "click", () => {
-      Tools.play(Sounds.rip);
-      Tools.removeEventHandler(handle);
-      this.div.remove();
+      Tools.play(Sounds.rip).then(() => {
+        Tools.removeEventHandler(handle);
+        this.div.remove(); 
+      });
     });
   }
   get() {
@@ -260,13 +261,13 @@ export class ATMReceiptPrinter {
     if (this.currentReceipt) {
       this.currentReceipt.fall();
     }
+    await Tools.play(Sounds.receipt);
     let receipt = new Receipt(action, from, to, amount, receipt_no);
     let div = receipt.get();
     this.element.appendChild(div);
     let ppos = this.getCenters(this.element);
     receipt.setPosition(ppos.x - (div.offsetWidth / 2), ppos.y);    
     this.currentReceipt = receipt;
-    await Tools.play(Sounds.receipt);
   }
 }
 
