@@ -50,7 +50,8 @@ export class ATM {
     this.id = 715;
     this.host = new FinancialHost();
     this.session = null;
-    Tools.play(Sounds.startup).then(() => this.console.appendLines(art).then(() => this.host.init().then(() => this.waitForCard())));
+    //Tools.play(Sounds.startup).then(() => this.console.appendLines(art).then(() => this.host.init().then(() => this.waitForCard())));
+    Tools.play(Sounds.startup).then(() => this.host.init().then(() => this.waitForCard()));
   }
   async callAPI(call, payload) {
     let requestId = new Date().getTime();
