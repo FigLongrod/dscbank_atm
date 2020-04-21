@@ -226,7 +226,7 @@ class Receipt {
     this.y = y;
   }
   move(){
-    this.style.transform = `translate(${this.x}px, ${this.y}px)`;
+    this.div.style.transform = `translate(${this.x}px, ${this.y}px)`;
   }
   fall() {
     Tools.play(Sounds.rip);
@@ -269,7 +269,7 @@ export class ATMReceiptPrinter {
       this.currentReceipt.fall();
     }
     await Tools.play(Sounds.receipt);
-    let receipt = new Receipt(action, from, to, amount, receipt_no);
+    let receipt = new Receipt(this, action, from, to, amount, receipt_no);
     let div = receipt.get();
     this.element.appendChild(div);
     let ppos = this.getCenters(this.element);
