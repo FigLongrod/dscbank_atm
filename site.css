@@ -147,7 +147,13 @@ div.note-2 {
 div.note-1 {
   background-position-y: -0px;
 }
-
+div#printer {
+  position: relative;
+  height: 10px;
+  width: 200px;
+  background-color: black;
+  margin-left: 12px;
+}
 div.receipt {
   border: 1px solid black;
   padding: 5px;
