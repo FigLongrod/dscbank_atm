@@ -396,24 +396,22 @@ export class ATM {
             });
             if (response.response.result == "success") {
               let lock = response.response.lock_id;
-              try
-              {
+              try {
                 await this.dispenser.dispense(val);
-                try
-                {
-                  let response = await this.callAPI("applywithdrawal", {lock_id: lock});
+                try {
+                  let response = await this.callAPI("applywithdrawal", { lock_id: lock });
                   account.total = response.response.balance.total;
                   account.available = response.response.balance.available;
                   account.limit = response.response.balance.limit;
                   await this.console.appendLines(["", `Cash dispensed. Receipt No: ${response.response.receipt_no}`, "", ""]);
                   return;
                 }
-                catch(response) {
+                catch (response) {
                   await this.console.appendLines(["", `Error:${response.response.error}`, ""]);
                   return;
                 }
               }
-              catch(amount) {
+              catch (amount) {
                 await this.console.appendLines(["", `Cash dispensing failed, only ${amount.toFixed(2)} could be dispensed`, "Please attend a branch to arrange release of locked funds", ""]);
                 return;
               }
@@ -452,33 +450,38 @@ export class ATM {
     while (!await this.waitForPIN());
   }
   async waitForPIN() {
-    while (true){
+    while (true) {
       await this.console.appendLines("", "Please enter your personal identification number (PIN), [ESC] to cancel, [ENTER] to confirm.", "");
-      let pin = await this.pinreader.waitForPIN();
-      try
-      {
-        let response = this.callAPI("authenticatebycard", { card_number: this.session.cardnumber, pin: pin });
-        if (response.response.result === "success") {
-          this.session.valid_to = response.response.valid_to;
-          this.session.name = response.response.name;
-          this.session.firstName = response.response.firstName;
-          return true;
-        } else {
-          if (response.response.failure_count >= 3) {
-            Tools.play(Sounds.error);
-            await this.console.appendLines("Verification failed. PIN incorrect.", "", "", "Attempts Exceeded. Card captured.", "Please attend a DSC Bank Daytona branch to retrieve your card", "");
-            this.cardreader.captureCard();
-            await new Promise(resolve => {
-              setTimeout(resolve, 2000);
-            });
-            return false;
+      try {
+        let pin = await this.pinreader.waitForPIN();
+        try {
+          let response = this.callAPI("authenticatebycard", { card_number: this.session.cardnumber, pin: pin });
+          if (response.response.result === "success") {
+            this.session.valid_to = response.response.valid_to;
+            this.session.name = response.response.name;
+            this.session.firstName = response.response.firstName;
+            return true;
           } else {
-            Tools.play(Sounds.error);
-            await this.console.appendLines("", "Verification failed. PIN incorrect.","");
+            if (response.response.failure_count >= 3) {
+              Tools.play(Sounds.error);
+              await this.console.appendLines("Verification failed. PIN incorrect.", "", "", "Attempts Exceeded. Card captured.", "Please attend a DSC Bank Daytona branch to retrieve your card", "");
+              this.cardreader.captureCard();
+              await new Promise(resolve => {
+                setTimeout(resolve, 2000);
+              });
+              return false;
+            } else {
+              Tools.play(Sounds.error);
+              await this.console.appendLines("", "Verification failed. PIN incorrect.", "");
+            }
           }
-        }      
-      } catch (response) {
-        throw response.response && response.response.error ? response.response.error : "Unknown error occurred!";
+        } catch (response) {
+          throw response.response && response.response.error ? response.response.error : "Unknown error occurred!";
+        }
+      }
+      catch {
+        await this.ejectCard("Canceled.");
+        return false;
       }
     }
   }
