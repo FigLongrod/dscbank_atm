@@ -528,12 +528,12 @@ export class ATM {
               destination.total = response.response.destination.balance.total;
               destination.available = response.response.destination.balance.available;
               destination.limit = response.response.destination.balance.limit;
-              await this.appendLines(`¶¶${action} complete. Receipt No: ${response.response.receipt_no}¶`);
+              await this.console.appendLines(`¶¶${action} complete. Receipt No: ${response.response.receipt_no}¶`);
               return;
             }
           }
           catch (response) {
-            await this.appendLines(`¶¶Error: ${response.response.error}¶`);
+            await this.console.appendLines(`¶¶Error: ${response.response.error}¶`);
             return;
           }
         default:
