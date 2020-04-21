@@ -50,5 +50,9 @@ export const Sounds = {
   startup:
     "./media/sounds/poweron.mp3",
   console:
-    "./media/sounds/tick.wav"
+    "./media/sounds/tick.wav",
+  take_note:
+    "./media/sounds/take-note.mp3",
+  dispense:
+    "./media/sounds/dispense.mp3"
 };

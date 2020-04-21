@@ -45,6 +45,9 @@ export class ATMCashDispenser {
       let noteDiv = document.createElement('div');
       noteDiv.className = "note note-" + note;
       this.element.appendChild(noteDiv);
+      Tools.addEventHandler(noteDiv, "click", () => {
+        Tools.play(Sounds.take_note).then(() => this.remove());
+      }, noteDiv);
       setTimeout(resolve, 250);
     });
   }
@@ -68,6 +71,7 @@ export class ATMCashDispenser {
   }
   dispense(amount) {
     console.log(`Dispensing notes up to ${amount}`)
+    await Tools.play(Sounds.dispense);
     return new Promise((resolve, reject) => {
       this.issueNotes(amount, "100")
         .then(remaining => this.issueNotes(remaining, "50")

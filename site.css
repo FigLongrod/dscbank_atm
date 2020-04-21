@@ -112,6 +112,7 @@ div.note {
   height: 70px;
   width: 163px;
   background-position: 98% 0%;
+  cursor: pointer;
 }
 div.note-100 {
   background-position-y: -456px;
