@@ -50,11 +50,11 @@ export class ATM {
     this.id = 715;
     this.host = new FinancialHost();
     this.session = null;
-    //Tools.play(Sounds.startup).then(() => this.console.appendLines(art).then(() => this.host.init().then(() => this.waitForCard())));
   }
   async init() {
     await Tools.play(Sounds.startup);
     await this.host.init();
+    await this.console.display(art);
     while (true) {
       await this.waitForCard();
     }
@@ -481,7 +481,7 @@ export class ATM {
   }
   async waitForCard() {
     do {
-      await this.console.display(`¶DSC Bank of Daytona - Your Education, Our Money¶~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~¶¶Automatch Teller Machine#: ${this.id}¶¶Please insert your membership card to begin...`);
+      await this.console.display(`¶DSC Bank of Daytona - Your Education, Our Money¶~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~¶¶Automatic Teller Machine#: ${this.id}¶¶Please insert your membership card to begin...`);
       let cardnumber = await this.cardreader.waitForCard();
       this.session = {
         cardnumber: cardnumber,
