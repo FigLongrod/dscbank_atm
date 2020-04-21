@@ -476,9 +476,9 @@ export class ATM {
         }
         let num = Number(key);
         if (num > 0 && num <= response.response.accounts.length) {
-          destination = this.session.accounts.filter(a => a.account_id == response.resolve.accounts[num - 1].account_id);
+          destination = this.session.accounts.filter(a => a.account_id == response.response.accounts[num - 1].account_id);
           if (destination.length < 1) {
-            destinationm = response.resolve.accounts[num - 1];
+            destinationm = response.response.accounts[num - 1];
             this.session.accounts.push(destination);
           } else {
             destination = destination[0];
