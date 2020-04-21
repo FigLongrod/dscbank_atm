@@ -480,7 +480,7 @@ export class ATM {
         }
       }
       catch {
-        await this.ejectCard("Canceled.");
+        await this.runEjectCard("Canceled.");
         return false;
       }
     }
