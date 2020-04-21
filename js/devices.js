@@ -39,22 +39,22 @@ export class ATMCashDispenser {
       "1": 1000
     };
   }
-  dispenseNote(note) {
-    return new Promise(resolve => {
-      console.log(`Dispensing a $${note} note`);
-      let noteDiv = document.createElement('div');
-      noteDiv.className = "note note-" + note;
-      this.element.appendChild(noteDiv);
-      Tools.addEventHandler(noteDiv, "click", () => {
-        Tools.play(Sounds.take_note).then(() => this.remove());
-      }, noteDiv);
+  async dispenseNote(note) {
+    console.log(`Dispensing a $${note} note`);
+    let noteDiv = document.createElement('div');
+    noteDiv.className = "note note-" + note;
+    this.element.appendChild(noteDiv);
+    Tools.addEventHandler(noteDiv, "click", () => {
+      Tools.play(Sounds.take_note).then(() => this.remove());
+    }, noteDiv);
+    await new Promise(resolve => {
       setTimeout(resolve, 250);
     });
   }
-  issueNotes(amountRemaining, note) {
+  async issueNotes(amountRemaining, note) {
     let val = parseInt(note, 10)
     console.log(`Dispensing $${note} notes up to ${amountRemaining}`);
-    return new Promise(resolve => {
+    return await new Promise(resolve => {
       if (this.notes[note] > 0 && amountRemaining >= val) {
         this.dispenseNote(note).then(() => {
           amountRemaining -= val;
@@ -69,25 +69,19 @@ export class ATMCashDispenser {
       }
     });
   }
-  dispense(amount) {
+  async dispense(amount) {
     console.log(`Dispensing notes up to ${amount}`)
     await Tools.play(Sounds.dispense);
-    return new Promise((resolve, reject) => {
-      this.issueNotes(amount, "100")
-        .then(remaining => this.issueNotes(remaining, "50")
-          .then(remaining => this.issueNotes(remaining, "20")
-            .then(remaining => this.issueNotes(remaining, "10")
-              .then(remaining => this.issueNotes(remaining, "5")
-                .then(remaining => this.issueNotes(remaining, "2")
-                  .then(remaining => this.issueNotes(remaining, "1")
-                    .then(remaining => {
-                      if (remaining > 0) {
-                        reject(remaining);
-                      } else {
-                        resolve();
-                      }
-                    })))))));
-    });
+    let remaining = await this.issueNotes(amount, "100");
+    remaining = await this.issueNotes(remaining, "50");
+    remaining = await this.issueNotes(remaining, "20");
+    remaining = await this.issueNotes(remaining, "10");
+    remaining = await this.issueNotes(remaining, "5");
+    remaining = await this.issueNotes(remaining, "20");
+    remaining = await this.issueNotes(remaining, "1");
+    if (remaining > 0) {
+      throw remaining;
+    }
   }
   add(notes) {
     notes.forEach(note => {
