@@ -155,7 +155,7 @@ export class ATM {
   }
   async listAccounts() {
     this.console.writeChar('¶');
-    await this.console.appendLines(this.session.accounts.map((a, i) => `${i + 1}: ${a.name} (${a.type}), Balance: ${a.balance.toFixed(2)}, Available: ${a.available.toFixed(2)}`));
+    await this.console.appendLines(this.session.accounts.map((a, i) => `[${i + 1}] ${a.name} (${a.type}), Balance: ${a.balance.toFixed(2)}, Available: ${a.available.toFixed(2)}`));
   }
 
   async selectAccount() {
@@ -464,7 +464,7 @@ export class ATM {
         await this.console.appendLines(`¶${response.response.accounts.map((a,i) => `[${i+1}] ${a.name}`).join('¶')}¶`);
         let destination = null;
         while(!destination) {
-          let key = await this.readKey(`¶Select account (1 - ${response.response.accounts.length}, [ESC] to cancel)`, response.response.accounts.map((a,i) => i).join(''), true);
+          let key = await this.readKey(`¶Select account (1 - ${response.response.accounts.length}, [ESC] to cancel)`, response.response.accounts.map((a, i) => (i + 1)).join(''), true);
           if (key == 27) {
             await this.console.appendLines("¶Canceled.¶");
             return;
@@ -473,11 +473,11 @@ export class ATM {
           if (num > 0 && num <= response.response.accounts.length) {
             destination = this.session.accounts.filter(a => a.account_id == response.resolve.accounts[num-1].account_id);
             if (destination.length < 1) {
-              this.session.accounts.push(response.resolve.accounts[num-1]);
+              destinationm = response.resolve.accounts[num-1];
+              this.session.accounts.push(destination);
             } else {
               destination = destination[0];
             }
-
           } else {
             await this.console.appendLines("¶Invalid account selection¶");
             await Tools.play(Sounds.error);
