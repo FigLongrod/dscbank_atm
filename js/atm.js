@@ -503,7 +503,14 @@ export class ATM {
           break;
       }
       max = destMax < max ? destMax : max;
-      let amount = await this.readAmount(`¶Please enter an amount (max: ${max.toFixed(2)}): `);
+      let amount = null;
+      do {
+        amount = Number(await this.readAmount(`¶Please enter an amount (max: ${max.toFixed(2)}): `));
+        if (amount <= 0 || amount > max) {
+          await this.appendLines("¶¶Invalid Amount.¶");
+          amount = null;
+        }
+      } while (!amount);
       switch (await this.readKey(`¶¶${action} ${amount.toFixed(2)} from ${account.name} to ${destination.name}? (Y/N): `, "YNyn", false)) {
         case "N":
         case "n":
