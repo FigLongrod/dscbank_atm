@@ -1,4 +1,4 @@
-import {Tools} from './tools.js';
+import { Tools } from './tools.js';
 
 class Member {
   constructor(data) {
@@ -43,10 +43,10 @@ class Account {
     this.type = data.type;
     this.locks = data.locks || [];
     this.balance = {
-      locked: function() {
+      locked: function () {
         return this.locks.reduce((total, lock) => (total += lock.amount), 0);
       }.bind(this),
-      available: function() {
+      available: function () {
         return this.type == "LOAN" ? this.hasRedraw ? this.balance.limit - this.balance.total : 0 : this.balance.total - this.balance.locked();
       }.bind(this),
       pending: 0,
@@ -70,8 +70,8 @@ class Account {
       this.locks.length < 1
         ? 1
         : this.locks.reduce(
-            (max, lock) => (max = max > lock.id ? max : lock.id)
-          );
+          (max, lock) => (max = max > lock.id ? max : lock.id)
+        );
     let test = this.canWithdraw(amount);
     if (test == "OKAY") {
       this.locks.push({ id: id, amount: amount });
@@ -129,7 +129,8 @@ export class FinancialHost {
       Tools.fetchJSONFile("json/accounts.json").then(data => {
         this.members = data.map(m => new Member(m));
         resolve(this);
-    }, reject)});
+      }, reject)
+    });
   }
   error(request, code, message) {
     return {
@@ -333,7 +334,7 @@ export class FinancialHost {
               resolve(
                 this.response(request, {
                   result: "success",
-                  accounts: member.accounts.filter(a =>  !(a.type == "LOAN" && a.balance.total == 0)).map(mapAccount)
+                  accounts: member.accounts.filter(a => !(a.type == "LOAN" && a.balance.total == 0)).map(mapAccount)
                 })
               );
             case "withdraw":
@@ -630,14 +631,15 @@ export class FinancialHost {
                 receipt_no: receiptNo
               })
             );
+          } else {
+            reject(
+              this.error(
+                request,
+                result,
+                "Failed to perform funds transfer, no changes have been made"
+              )
+            );
           }
-          reject(
-            this.error(
-              request,
-              result,
-              "Failed to perform funds transfer, no changes have been made"
-            )
-          );
         case "depositfunds":
           if (member.canTransact() !== "OKAY") {
             reject(
