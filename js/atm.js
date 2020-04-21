@@ -493,10 +493,10 @@ export class ATM {
       let destMax = 0;
       switch (destination.type) {
         case "SAVINGS":
-          destMax = destination.limit - destination.total;
+          destMax = destination.limit - destination.balance;
           break;
         case "CREDIT":
-          destMax = destination.limit - destination.total;
+          destMax = destination.limit - destination.balance;
           break;
         case "LOAN":
           destMax = destination.limit != 0 ? -(destination.limit - destination.balance) : -destination.balance;
