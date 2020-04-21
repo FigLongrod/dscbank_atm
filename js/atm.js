@@ -121,8 +121,8 @@ export class ATM {
     }
   }
   async runEjectCard(reason) {
-    await this.console.appendLines(`${reason}\`\``);
-    await this.console.appendLines("Ejecting card. Please take your card.")
+    await this.console.appendLines(`¶${reason}¶`);
+    await this.console.appendLines("¶Ejecting card. Please take your card.¶")
     await this.cardreader.ejectCard();
     await this.cardreader.waitForTakeCard();
   }
@@ -136,30 +136,31 @@ export class ATM {
         await this.runManageAccount(account);
       }
     }
-    catch (response) {
-      await this.runEjectCard(["", response, ""]);
+    catch (reason) {
+      await this.runEjectCard(reason);
     }
   }
   async accountListHeader() {
     if (this.session.accounts.length > 0) {
-      await this.console.appendLines(`\`You have ${this.session.accounts.length} accounts:\`\``);
+      await this.console.appendLines(`¶You have ${this.session.accounts.length} accounts:¶`);
     } else {
       throw "You do not have any accessible accounts.";
     }
   }
   async listAccounts() {
+    this.console.writeChar('¶');
     await this.console.appendLines(this.session.accounts.map((a, i) => `${i + 1}: ${a.name} (${a.type}), Balance: ${a.balance.toFixed(2)}, Available: ${a.available.toFixed(2)}`));
   }
 
   async selectAccount() {
     while (true) {
-      let key = await this.readKey(`\`Please select an account to manage (1 - ${this.session.accounts.length}, [ESC] to Cancel): `, this.session.accounts.map((a, i) => (i + 1)).join(""), true);
+      let key = await this.readKey(`¶Please select an account to manage (1 - ${this.session.accounts.length}, [ESC] to Cancel): `, this.session.accounts.map((a, i) => (i + 1)).join(""), true);
       if (key == 27) {
         throw "Cancel.";
       } else {
         let num = Number(key);
         if (num > 0 && num <= this.session.accounts.length) {
-          await this.console.appendLines(`\`You selected: ${this.session.accounts[num - 1].name}\``);
+          await this.console.appendLines(`¶¶You selected: ${this.session.accounts[num - 1].name}¶`);
           return this.session.accounts[num - 1];
         } else {
           Tools.play(Sounds.error);
@@ -191,7 +192,7 @@ export class ATM {
     options.push("Cash Deposit");
     if (options.length < 1) {
       this.console
-        .appendLines(["", "This account has no viable operations."])
+        .appendLines("¶This account has no viable operations.¶")
         .then(resolve);
       return;
     }
@@ -199,22 +200,22 @@ export class ATM {
     while (true) {
       let key = await this.readKey(prompt, options.map((o, i) => i + 1).join(""), true);
       if (key == 27) {
-        await this.console.appendLines("", "Cancel.", "");
+        await this.console.appendLines("¶¶Cancel.¶");
         return;
       }
       let num = Number(key);
       if (num > 0 && num <= options.length) {
         switch (options[num - 1]) {
           case "Cash Withdrawal":
-            await this.console.appendLines("", `You selected: Cash Withdrawal from ${account.name}`);
+            await this.console.appendLines(`¶You selected: Cash Withdrawal from ${account.name}¶`);
             await this.runWithdraw("Cash Withdrawal", account, account.available);
             return;
           case "Funds Transfer":
-            await this.console.appendLines("", `You selected: Funds Transfer from ${account.name}`);
+            await this.console.appendLines(`¶You selected: Funds Transfer from ${account.name}¶`);
             await this.runTransfer("Funds Transfer", account);
             return;
           case "Cash Deposit":
-            await this.console.appendLines("", `You selected: Cash Deposit to ${account.name}`);
+            await this.console.appendLines(`¶You selected: Cash Deposit to ${account.name}¶`);
             await this.runDeposit("Cash Deposit", account);
             return;
           default:
@@ -379,12 +380,12 @@ export class ATM {
   async runWithdraw(action, account, max) {
     max = max > 500 ? 500 : max;
     while (true) {
-      let amount = await this.readAmount(`Please enter an amount (max: ${max.toFixed(2)}): `);
+      let amount = await this.readAmount(`¶Please enter an amount (max: ${max.toFixed(2)}): `);
       let val = Number(amount);
       if (val > 0 && val <= max) {
-        let key = await this.readKey(`${action}: ${val.toFixed(2)}? (Y/N): `, "YNyn", false);
+        let key = await this.readKey(`¶¶${action}: ${val.toFixed(2)}? (Y/N): `, "YNyn", false);
         if (key == 27) {
-          await this.console.appendLines("", "Canceled.", "");
+          await this.console.appendLines("¶¶Canceled.¶");
           return;
         }
         else if (key == "Y" || key == "y") {
@@ -402,30 +403,30 @@ export class ATM {
                   account.total = response.response.balance.total;
                   account.available = response.response.balance.available;
                   account.limit = response.response.balance.limit;
-                  await this.console.appendLines(["", `Cash dispensed. Receipt No: ${response.response.receipt_no}`, "", ""]);
+                  await this.console.appendLines(`¶¶Cash dispensed. Receipt No: ${response.response.receipt_no}¶`);
                   return;
                 }
                 catch (response) {
-                  await this.console.appendLines(["", `Error:${response.response.error}`, ""]);
+                  await this.console.appendLines(`¶¶Error:${response.response.error}¶`);
                   return;
                 }
               }
               catch (amount) {
-                await this.console.appendLines(["", `Cash dispensing failed, only ${amount.toFixed(2)} could be dispensed`, "Please attend a branch to arrange release of locked funds", ""]);
+                await this.console.appendLines(`¶¶Cash dispensing failed, only ${amount.toFixed(2)} could be dispensed¶Please attend a branch to arrange release of locked funds¶`);
                 return;
               }
             } else {
-              await this.console.appendLines(["", "Could not lock funds for withdrawal: " + response.response.error, ""]);
+              await this.console.appendLines(`¶¶Could not lock funds for withdrawal: ${response.response.error}¶`);
               return;
             }
           }
           catch (response) {
-            await this.console.appendLines(["", "Could not lock funds for withdrawal: " + response.response.error, ""]);
+            await this.console.appendLines(`¶¶Could not lock funds for withdrawal: ${response.response.error}¶`);
             return;
           }
         }
       } else {
-        await this.console.appendLines(["", "Invalid amount entered."]);
+        await this.console.appendLines("¶Invalid amount entered.¶");
         Tools.play(Sounds.error);
       }
     }
@@ -438,20 +439,20 @@ export class ATM {
   }
   async waitForCard() {
     do {
-      await this.console.display("DSC Bank of Daytona - Your Education, Our Money", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", `Automatch Teller Machine#: ${this.id}`, "", "Please insert your membership card to begin...", "");
+      await this.console.display(`¶DSC Bank of Daytona - Your Education, Our Money¶~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~¶¶Automatch Teller Machine#: ${this.id}¶¶Please insert your membership card to begin...`);
       let cardnumber = await this.cardreader.waitForCard();
       this.session = {
         cardnumber: cardnumber,
         session_id: new Date().getTime() + "_SESSION"
       };
-      await this.console.appendLines(["", `Card number: ${cardnumber}`, ""]);
+      await this.console.appendLines(`¶¶Card number: ${cardnumber}¶`);
     }
     while (!await this.waitForPIN());
     await this.runAccountsList();
   }
   async waitForPIN() {
     while (true) {
-      await this.console.appendLines("", "Please enter your personal identification number (PIN), [ESC] to cancel, [ENTER] to confirm.", "");
+      await this.console.appendLines("¶Please enter your personal identification number (PIN), [ESC] to cancel, [ENTER] to confirm.¶");
       try {
         let pin = await this.pinreader.waitForPIN();
         try {
@@ -464,7 +465,7 @@ export class ATM {
           } else {
             if (response.response.failure_count >= 3) {
               Tools.play(Sounds.error);
-              await this.console.appendLines("Verification failed. PIN incorrect.", "", "", "Attempts Exceeded. Card captured.", "Please attend a DSC Bank Daytona branch to retrieve your card", "");
+              await this.console.appendLines("¶Verification failed. PIN incorrect.¶¶Attempts Exceeded. Card captured.¶¶Please attend a DSC Bank Daytona branch to retrieve your card¶");
               this.cardreader.captureCard();
               await new Promise(resolve => {
                 setTimeout(resolve, 2000);
@@ -472,7 +473,7 @@ export class ATM {
               return false;
             } else {
               Tools.play(Sounds.error);
-              await this.console.appendLines("", "Verification failed. PIN incorrect.", "");
+              await this.console.appendLines("¶Verification failed. PIN incorrect.¶");
             }
           }
         } catch (response) {
@@ -480,7 +481,7 @@ export class ATM {
         }
       }
       catch {
-        await this.runEjectCard("Canceled.");
+        await this.runEjectCard("¶Canceled.¶");
         return false;
       }
     }
