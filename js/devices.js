@@ -290,25 +290,25 @@ export class ATMConsole {
   }
   async appendLines(lines) {
     if (typeof lines === 'string') {
-      await this.appendText(lines);
-    } else {
       let args = [];
       for (let i = 1; i < arguments.length; i++) {
         args.push(arguments[i]);
       }
       await this.appendText(args);
+    } else {
+      await this.appendText(lines);
     }
   }
   async display(lines) {
     this.clear();
     if (typeof lines === 'string') {
-      await this.appendText(lines);
-    } else {
       let args = [];
       for (let i = 1; i < arguments.length; i++) {
         args.push(arguments[i]);
       }
       await this.appendText(args);
+    } else {
+      await this.appendText(lines);
     }
   }
 }
