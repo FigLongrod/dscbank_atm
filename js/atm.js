@@ -449,6 +449,7 @@ export class ATM {
       await this.console.appendLines(["", `Card number: ${cardnumber}`, ""]);
     }
     while (!await this.waitForPIN());
+    await this.runAccountsList();
   }
   async waitForPIN() {
     while (true) {
