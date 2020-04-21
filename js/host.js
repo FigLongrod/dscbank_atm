@@ -47,7 +47,7 @@ class Account {
         return this.locks.reduce((total, lock) => (total += lock.amount), 0);
       }.bind(this),
       available: function () {
-        return this.type == "LOAN" ? this.hasRedraw ? this.balance.limit - this.balance.total : 0 : this.balance.total - this.balance.locked();
+        return this.type == "LOAN" ? this.hasRedraw ? -(this.balance.limit - this.balance.total) : 0 : this.balance.total - this.balance.locked();
       }.bind(this),
       pending: 0,
       limit: data.balance.limit || 0,
