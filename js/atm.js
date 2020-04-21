@@ -522,13 +522,13 @@ export class ATM {
           try {
             let response3 = await this.callAPI("transferfunds", { source_id: account.account_id, destination_id: destination.account_id, amount: amount });
             if (response3.response.result == "success") {
-              account.total = response.response.source.balance.total;
-              account.available = response.response.source.balance.available;
-              account.limit = response.response.source.balance.limit;
-              destination.total = response.response.destination.balance.total;
-              destination.available = response.response.destination.balance.available;
-              destination.limit = response.response.destination.balance.limit;
-              await this.console.appendLines(`¶¶${action} complete. Receipt No: ${response.response.receipt_no}¶`);
+              account.total = response3.response.source.balance.total;
+              account.available = response3.response.source.balance.available;
+              account.limit = response3.response.source.balance.limit;
+              destination.total = response3.response.destination.balance.total;
+              destination.available = response3.response.destination.balance.available;
+              destination.limit = response3.response.destination.balance.limit;
+              await this.console.appendLines(`¶¶${action} complete. Receipt No: ${response3.response.receipt_no}¶`);
               return;
             }
           }

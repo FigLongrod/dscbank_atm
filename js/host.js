@@ -399,7 +399,7 @@ export class FinancialHost {
                 limit: account.balance.limit,
                 pending: 0
               }
-            })            
+            })
           );
           return;
         case "authorizewithdrawal":
@@ -649,19 +649,23 @@ export class FinancialHost {
             resolve(
               this.response(request, {
                 result: "success",
-                source_balance: {
-                  total: source.balance.total,
-                  locked: source.balance.locked(),
-                  available: source.balance.available(),
-                  limit: source.balance.limit,
-                  pending: 0
+                source: {
+                  balance: {
+                    total: source.balance.total,
+                    locked: source.balance.locked(),
+                    available: source.balance.available(),
+                    limit: source.balance.limit,
+                    pending: 0
+                  }
                 },
-                destination_balance: {
-                  total: destination.balance.total,
-                  locked: destination.balance.locked(),
-                  available: destination.balance.available(),
-                  limit: destination.balance.limit,
-                  pending: 0
+                destination: {
+                  balance: {
+                    total: destination.balance.total,
+                    locked: destination.balance.locked(),
+                    available: destination.balance.available(),
+                    limit: destination.balance.limit,
+                    pending: 0
+                  }
                 },
                 receipt_no: receiptNo
               })

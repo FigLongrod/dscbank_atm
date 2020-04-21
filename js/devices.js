@@ -218,7 +218,6 @@ export class ATMConsole {
     this.clear();
   }
   scrollUp() {
-    console.log("ATM screen scrolling up");
     this.element.deleteRow(0);
     let row = this.element.insertRow();
     for (let j = 0; j < this.width; j++) {
