@@ -290,11 +290,7 @@ export class ATMConsole {
   }
   async appendLines(lines) {
     if (typeof lines === 'string') {
-      let args = [];
-      for (let i = 1; i < arguments.length; i++) {
-        args.push(arguments[i]);
-      }
-      await this.appendText(args);
+      await this.appendText(arguments);
     } else {
       await this.appendText(lines);
     }
@@ -302,11 +298,7 @@ export class ATMConsole {
   async display(lines) {
     this.clear();
     if (typeof lines === 'string') {
-      let args = [];
-      for (let i = 1; i < arguments.length; i++) {
-        args.push(arguments[i]);
-      }
-      await this.appendText(args);
+      await this.appendText(arguments);
     } else {
       await this.appendText(lines);
     }
