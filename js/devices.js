@@ -274,8 +274,8 @@ export class ATMConsole {
       }
     }
   }
-  appendText(line) {
-    return new Promise((resolve, reject) => {
+  async appendText(line) {
+    await new Promise(resolve => {
       let chars = Array.from(line);
       chars.reverse();
       let handle = setInterval(() => {
@@ -286,13 +286,29 @@ export class ATMConsole {
           this.writeChar(chars.pop(), true);
         }
       }, 10);
-    });
+    })
   }
-  appendLines(lines) {
-    return this.appendText((typeof lines == string ? arguments : lines).join("`"));
+  async appendLines(lines) {
+    if (typeof lines === 'string') {
+      await this.appendText(lines);
+    } else {
+      let args = [];
+      for (let i = 1; i < arguments.length; i++) {
+        args.push(arguments[i]);
+      }
+      await this.appendText(args);
+    }
   }
-  display(lines) {
+  async display(lines) {
     this.clear();
-    return this.appendLines(typeof lines == string ? arguments : lines);
+    if (typeof lines === 'string') {
+      await this.appendText(lines);
+    } else {
+      let args = [];
+      for (let i = 1; i < arguments.length; i++) {
+        args.push(arguments[i]);
+      }
+      await this.appendText(args);
+    }
   }
 }
