@@ -325,7 +325,7 @@ export class FinancialHost {
               resolve(
                 this.response(request, {
                   result: "success",
-                  accounts: member.accounts.map(mapAccount)
+                  accounts: member.accounts.filter(a => a.id !== source.id).map(mapAccount)
                 })
               );
             case "deposit":
