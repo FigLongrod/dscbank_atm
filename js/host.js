@@ -336,7 +336,9 @@ export class FinancialHost {
               resolve(
                 this.response(request, {
                   result: "success",
-                  accounts: member.accounts.filter(a => a.id !== source.id && !(a.type == "LOAN" && a.balance.total == 0)).map(mapAccount)
+                  accounts: member.accounts.filter(a => a.id !== source.id
+                    && !(a.type == "LOAN" && a.balance.total == 0)
+                    && !(a.type == "CREDIT" && a.balance.total == a.balance.limit)).map(mapAccount)
                 })
               );
               return;
@@ -344,7 +346,8 @@ export class FinancialHost {
               resolve(
                 this.response(request, {
                   result: "success",
-                  accounts: member.accounts.filter(a => !(a.type == "LOAN" && a.balance.total == 0)).map(mapAccount)
+                  accounts: member.accounts.filter(a => !(a.type == "LOAN" && a.balance.total == 0)
+                    && !(a.type == "CREDIT" && a.balance.total == a.balance.limit)).map(mapAccount)
                 })
               );
               return;
@@ -353,8 +356,9 @@ export class FinancialHost {
                 this.response(request, {
                   result: "success",
                   accounts: member.accounts.filter(
-                    a => a.type !== "LOAN" || (a.hasRedraw && a.balance.total < 0)
-                  )
+                    (a.type == "LOAN" && a.hasRedraw && (a.balance.total < 0) ||
+                      (a.type == "CREDIT" && a.balance.available() > 0)) ||
+                    (a.type == "SAVINGS" && a.balance.available() > 0)).map(mapAccount)
                 })
               );
               return;
