@@ -121,7 +121,7 @@ export class ATM {
     }
   }
   async runEjectCard(reason) {
-    await this.console.appendLines(reason);
+    await this.console.appendLines(reason, "", "");
     await this.console.appendLines("Ejecting card. Please take your card.")
     await this.cardreader.ejectCard();
     await this.cardreader.waitForTakeCard();
@@ -456,7 +456,7 @@ export class ATM {
       try {
         let pin = await this.pinreader.waitForPIN();
         try {
-          let response = this.callAPI("authenticatebycard", { card_number: this.session.cardnumber, pin: pin });
+          let response = await this.callAPI("authenticatebycard", { card_number: this.session.cardnumber, pin: pin });
           if (response.response.result === "success") {
             this.session.valid_to = response.response.valid_to;
             this.session.name = response.response.name;
