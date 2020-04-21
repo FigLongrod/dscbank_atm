@@ -291,12 +291,14 @@ export class ATMConsole {
   async appendLines(lines) {
     if (typeof lines === 'string') {
       await this.appendText(lines);
+    } else if (Array.isArray(lines)) {
+      await this.appendText(lines.join('`'));     
     } else {
       await this.appendText(arguments.join('`'));
     }
   }
   async display() {
     this.clear();
-    await this.appendLines(...arguments);
+    await this.appendLines(arguments);
   }
 }
