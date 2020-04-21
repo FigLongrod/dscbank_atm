@@ -25,7 +25,7 @@ let art = [
   "            /     /#####/++++######\\       splining paths...              [OKAY]",
   "           /     /#####/+++++#######\\      pathing splines...             [FAIL]",
   "          /     /#####/  +++++#######\\",
-  "         /     /#####/    +++++#######\\    non-critical error, corruption at 5%",
+  "         /     /#####/    +++++#######\\    error, personality core corruption at 5%",
   "        /     /#####/      +++++#######\\   resuming...",
   "       /     /#####/        +++++#######\\",
   "      /     /#####/__________+++++#######\\",
@@ -197,9 +197,7 @@ export class ATM {
     }
     options.push("Cash Deposit");
     if (options.length < 1) {
-      this.console
-        .appendLines("¶This account has no viable operations.¶")
-        .then(resolve);
+      this.console.appendLines("¶This account has no viable operations.¶");
       return;
     }
     let prompt = `Select an operation: ${options.map((o, i) => `[${i + 1}] ${o}`).join(" ")} [ESC] Cancel:`;
@@ -242,9 +240,7 @@ export class ATM {
       options.push("Cash Deposit");
     }
     if (options.length < 1) {
-      this.console
-        .appendLines("¶This account has no viable operations.¶")
-        .then(resolve);
+      await this.console.appendLines("¶This account has no viable operations.¶");
       return;
     }
     let prompt = `Select an operation: ${options.map((o, i) => `[${i + 1}] ${o}`).join(" ")} [ESC] Cancel:`;
@@ -287,9 +283,7 @@ export class ATM {
       options.push("Cash Payment");
     }
     if (options.length < 1) {
-      this.console
-        .appendLines("¶This account has no viable operations.¶")
-        .then(resolve);
+      await this.console.appendLines("¶This account has no viable operations.¶")
       return;
     }
     let prompt = `Select an operation: ${options.map((o, i) => `[${i + 1}] ${o}`).join(" ")} [ESC] Cancel:`;
@@ -482,7 +476,7 @@ export class ATM {
     }
 
   }
-  async runDeposit(account) {
+  async runDeposit(action, account, max) {
     return new Promise((resolve, reject) => { });
   }
   async waitForCard() {
