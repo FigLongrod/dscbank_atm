@@ -45,7 +45,7 @@ export class ATMCashDispenser {
     noteDiv.className = "note note-" + note;
     this.element.appendChild(noteDiv);
     Tools.addEventHandler(noteDiv, "click", () => {
-      Tools.play(Sounds.take_note).then(() => this.remove());
+      Tools.play(Sounds.take_note).then(() => noteDiv.remove());
     }, noteDiv);
     await new Promise(resolve => {
       setTimeout(resolve, 250);
