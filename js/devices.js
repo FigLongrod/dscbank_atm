@@ -208,7 +208,7 @@ class Receipt {
   constructor(action, from, to, amount, receipt_no) {
     this.div = document.createElement("div");
     this.div.className = "receipt";
-    this.div.innerHTML = `"<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
+    this.div.innerHTML = `<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
     let handle = Tools.addEventHandler(this.div, "click", () => {
       Tools.play(Sounds.rip);
       Tools.removeEventHandler(handle);
