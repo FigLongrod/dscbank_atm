@@ -85,6 +85,13 @@ div.card h4 {
   left: 10px;
   
 }
+td.console {
+  vertical-align: top;
+  border: 5px ridge #ccc;
+  background-color: black;
+  padding: 0 5px;
+  border-radius: 15px 15px 15px 15px;
+}
 div.card:hover {
   background-color: orange;
 }

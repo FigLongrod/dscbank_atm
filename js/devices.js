@@ -110,7 +110,7 @@ export class ATMCardReader {
       let handle = setInterval(() => {
         if (this.hasCard) {
           this.red.style.display = "none";
-          this.green.style.display = "block";  
+          this.green.style.display = "block";
           clearInterval(handle);
           Tools.play(Sounds.pinbutton).then(() => resolve(this.card.cardNumber));
         }
@@ -155,6 +155,8 @@ export class ATMCardReader {
     this.card = null;
     this.hasCard = false;
     this.locked = false;
+    this.red.style.display = "block";
+    this.green.style.display = "none";
   }
 }
 
