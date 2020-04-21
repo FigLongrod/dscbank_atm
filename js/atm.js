@@ -157,7 +157,7 @@ export class ATM {
       if (key == 27) {
         throw "Cancel.";
       } else {
-        let num = Number(e.key);
+        let num = Number(key);
         if (num > 0 && num <= this.session.accounts.length) {
           await this.console.appendLines(`\`You selected: ${this.session.accounts[num - 1].name}\``);
           return this.session.accounts[num - 1];
@@ -202,7 +202,7 @@ export class ATM {
         await this.console.appendLines("", "Cancel.", "");
         return;
       }
-      let num = Number(e.key);
+      let num = Number(key);
       if (num > 0 && num <= options.length) {
         switch (options[num - 1]) {
           case "Cash Withdrawal":
