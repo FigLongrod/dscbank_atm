@@ -502,9 +502,9 @@ export class ATM {
           destMax = destination.limit != 0 ? -(destination.limit - destination.balance) : -destination.balance;
           break;
       }
-      max = destMax < max ? max : destMax;
+      max = destMax < max ? destMax : max;
       let amount = await this.readAmount(`¶Please enter an amount (max: ${max.toFixed(2)}): `);
-      switch (await this.readKey(`¶¶${action} ${amount.toFixed} from ${account.name} to ${destination.name}? (Y/N): `, "YNyn", false)) {
+      switch (await this.readKey(`¶¶${action} ${amount.toFixed(2)} from ${account.name} to ${destination.name}? (Y/N): `, "YNyn", false)) {
         case "N":
         case "n":
           await this.console.appendLines("¶¶Canceled.¶");
