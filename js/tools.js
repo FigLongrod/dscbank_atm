@@ -54,5 +54,9 @@ export const Sounds = {
   take_note:
     "./media/sounds/take-note.mp3",
   dispense:
-    "./media/sounds/dispense.mp3"
+    "./media/sounds/dispense.mp3",
+  rip:
+    "./media/sounds/rip.wav",
+  receipt:
+    "./media/sounds/print.mp3"
 };

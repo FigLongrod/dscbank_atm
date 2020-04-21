@@ -204,8 +204,65 @@ export class ATMPinReader {
   }
 }
 
+class Receipt {
+  constructor(action, from, to, amount, receipt_no) {
+    this.div = document.createElement("div");
+    div.className = "receipt";
+    div.innerHTML = `"<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
+  }
+  get() {
+    return this.div;
+  }
+  setPosition(x,y) {
+    this.x = x;
+    this.y = y;
+  }
+  move(){
+    this.style.transform = `translate(${x}px, ${y}px)`;
+  }
+  fall() {
+    Tools.play(Sounds.rip);
+    let handle = setInterval(() => {
+      this.y += 10;
+      this.move();
+      if (!this.onScreen()){
+        console.log('Receipt fell on the ground');
+        clearInterval(handle);
+        this.div.remove();
+      }
+    }, 100);
+  }
+  onScreen() {
+    var bounds = this.element.getBoundingClientRect();
+    if( bounds.top > window.innerHeight) {
+     return false;
+    }
+    return true;
+  }
+}
+
 export class ATMReceiptPrinter {
-  print(lines) { }
+  constructor(element) {
+    this.element = element;
+    this.currentReceipt = null;
+  }
+  getCenters(element) {
+    let centerX = element.offsetLeft + element.offsetWidth / 2;
+    let centerY = element.offsetTop + element.offsetHeight / 2;   
+    return { x: centerX, y: centerY };
+  }
+  async print(action, from, to, amount, receipt_no) {
+    if (this.currentReceipt) {
+      this.currentReceipt.fall();
+    }
+    let receipt = new Receipt(action, from, to, amount, receipt_no);
+    let div = receipt.get();
+    this.element.appendChild(div);
+    let ppos = this.getCenters(this.element);
+    receipt.setPosition(ppos.x - (div.offsetWidth / 2), ppos.y);    
+    this.currentReceipt = receipt;
+    await Tools.play(Sounds.receipt);
+  }
 }
 
 // define a simple 80x25 console screen

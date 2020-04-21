@@ -3,7 +3,8 @@ import {
   ATMCashDispenser,
   ATMCardReader,
   ATMCashReader,
-  ATMPinReader
+  ATMPinReader,
+  ATMReceiptPrinter
 } from "./devices.js";
 import { FinancialHost } from "./host.js";
 import { Tools, Sounds } from "./tools.js";
@@ -40,13 +41,14 @@ let art = [
 ];
 
 export class ATM {
-  constructor(consoleElement, cardreaderElement, pinreaderElement, dispenserElement) {
+  constructor(consoleElement, cardreaderElement, pinreaderElement, dispenserElement, printerElement) {
     console.log("Manufacturing new ATM");
     this.console = new ATMConsole(consoleElement);
     this.dispenser = new ATMCashDispenser(dispenserElement);
     this.cardreader = new ATMCardReader(cardreaderElement);
     this.reader = new ATMCashReader();
     this.pinreader = new ATMPinReader(pinreaderElement);
+    this.printer = new ATMReceiptPrinter(printerElement);
     this.id = 715;
     this.host = new FinancialHost();
     this.session = null;
@@ -342,6 +344,7 @@ export class ATM {
                   account.total = response.response.balance.total;
                   account.available = response.response.balance.available;
                   account.limit = response.response.balance.limit;
+                  await this.printer.print("withdrawal", `${account.account_id}:${account.name}`, 'CASH', amount, response.response.receipt_no);
                   await this.console.appendLines(`¶¶Cash dispensed. Receipt No: ${response.response.receipt_no}¶`);
                   return;
                 }

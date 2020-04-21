@@ -147,3 +147,12 @@ div.note-2 {
 div.note-1 {
   background-position-y: -0px;
 }
+
+div.receipt {
+  border: 1px solid black;
+  padding: 5px;
+  color: darkgray;
+  background-color: white;
+  font-family: 'Courier New', Courier, monospace;
+  text-transform: uppercase;
+}
