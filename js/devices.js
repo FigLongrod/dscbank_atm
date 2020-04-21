@@ -241,7 +241,7 @@ class Receipt {
     }, 100);
   }
   onScreen() {
-    let bounds = this.element.getBoundingClientRect();
+    let bounds = this.div.getBoundingClientRect();
     if( bounds.top > window.innerHeight) {
      return false;
     }

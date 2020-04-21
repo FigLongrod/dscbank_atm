@@ -18,7 +18,13 @@ export class Tools {
       if (volume) {
         sound.volume = volume;
       }
-      sound.play().then(resolve, resolve).catch(resolve);
+      sound.play().then(resolve, (e) => {
+        console.log('play', e);
+        resolve();
+      }).catch(() => {
+        console.log('play', e);
+        resolve();
+      });
     });
   }
   static fetchJSONFile(path) {
