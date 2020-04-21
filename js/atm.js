@@ -507,7 +507,7 @@ export class ATM {
       do {
         amount = Number(await this.readAmount(`¶Please enter an amount (max: ${max.toFixed(2)}): `));
         if (amount <= 0 || amount > max) {
-          await this.appendLines("¶¶Invalid Amount.¶");
+          await this.console.appendLines("¶¶Invalid Amount.¶");
           amount = null;
         }
       } while (!amount);
