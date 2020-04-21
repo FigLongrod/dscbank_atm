@@ -294,11 +294,11 @@ export class ATMConsole {
     } else if (Array.isArray(lines)) {
       await this.appendText(lines.join('`'));     
     } else {
-      await this.appendText(arguments.join('`'));
+      await this.appendText(Array.from(arguments).join('`'));
     }
   }
   async display() {
     this.clear();
-    await this.appendLines(arguments);
+    await this.appendLines(Array.from(arguments));
   }
 }
