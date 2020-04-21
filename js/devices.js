@@ -289,12 +289,10 @@ export class ATMConsole {
     })
   }
   async appendLines(lines) {
-    if (typeof lines === 'string') {
-      await this.appendText(lines);
-    } else if (Array.isArray(lines)) {
-      await this.appendText(lines.join('`'));     
+    if (Array.isArray(lines)) {
+      await this.appendText(lines.join('`'))
     } else {
-      await this.appendText(Array.from(arguments).join('`'));
+      await this.appendText(arguments.length > 1 ? Array.from(arguments).join('`') : [lines]);
     }
   }
   async display() {
