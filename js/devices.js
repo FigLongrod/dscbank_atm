@@ -168,11 +168,12 @@ export class ATMPinReader {
     this.pin = "";
     this.span.innerHTML = "";
   }
-  waitForPIN() {
+  async waitForPIN() {
     this.pin = "";
     this.span.innerHTML = "";
     this.option = "none";
-    return new Promise((resolve, reject) => {
+
+    return await new Promise((resolve, reject) => {
       let handler = Tools.addEventHandler(
         document,
         "keyup",
@@ -193,7 +194,7 @@ export class ATMPinReader {
             this.span.innerHTML = "";
             this.pin = "";
             Tools.removeEventHandler(handler);
-            reject();
+            reject("Canceled.");
           }
         },
         this
@@ -288,10 +289,10 @@ export class ATMConsole {
     });
   }
   appendLines(lines) {
-    return this.appendText(lines.join("`"));
+    return this.appendText((typeof lines == string ? arguments : lines).join("`"));
   }
   display(lines) {
     this.clear();
-    return this.appendLines(lines);
+    return this.appendLines(typeof lines == string ? arguments : lines);
   }
 }

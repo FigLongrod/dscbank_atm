@@ -50,13 +50,12 @@ export class ATM {
     this.id = 715;
     this.host = new FinancialHost();
     this.session = null;
-    Tools.play(Sounds.startup).then(() =>
-      this.console
-        .appendLines([])
-        .then(() => this.host.init().then(() => this.waitForCard()))
-    );
+    await Tools.play(Sounds.startup);
+    await this.console.appendLines(art);
+    await this.host.init();
+    this.waitForCard();
   }
-  callAPI(call, payload) {
+  async callAPI(call, payload) {
     let requestId = new Date().getTime();
     payload.call = call;
     let request = {
@@ -67,362 +66,11 @@ export class ATM {
       },
       request: payload
     };
-    return this.host.api(request);
+    return await this.host.api(request);
   }
-
-  // accounts list gets the list of accounts from the host
-  // and displays them as a selectable menu
-  // it uses getAccountsList, accountsListHeader, listAccounts, accountsListFooter
-  // when done, it chains control to selectAccount
-  runAccountsList() {
-    this.getAccountList().then(
-      () => this.accountListHeader(),
-      response => {
-        // failed to get account list from host
-      }
-    );
-  }
-  async getAccountList() {
-    try {
-      const response = await this.callAPI("listaccountsbytype", { type: "ALL" });
-      this.session.accounts = response.response.accounts;
-    }
-    catch (response_1) {
-      this.console.appendLines(["", "Error: " + response_1.response.error, ""]);
-    }
-  }
-  async accountListHeader() {
-    if (this.session.accounts.length > 0) {
-      await this.console
-        .appendLines([
-          "",
-          "You have " + this.session.accounts.length + " accounts:",
-          "",
-          ""
-        ]);
-      return await this.listAccounts();
-    } else {
-      await this.console
-        .appendLines([
-          "",
-          "You do not have any accessible accounts.",
-          "",
-          "Ejecting card. Please take your card."
-        ]);
-      this.cardreader.ejectCard();
-      return this.waitForCard();
-    }
-  }
-  async listAccounts() {
-    await this.console
-      .appendLines(this.session.accounts.map((a, i) => `${i +
-      1}: ${a.name} (${a.type}), Balance: ${a.balance.toFixed(2)}, Available: ${a.available.toFixed(2)}`));
-    return await this.accountListFooter();
-  }
-  async accountListFooter() {
-    await this.console
-      .appendLines([
-        "",
-        "",
-        `Please select an account to manage (1 - ${this.session.accounts.length}, [ESC] to Cancel): `
-      ]);
-    await this.selectAccount();
-    return this.waitForCard();
-  }
-  selectAccount() {
-    return new Promise((resolve, reject) => {
-      let handler = Tools.addEventHandler(
-        document,
-        "keyup",
-        e => {
-          if (e.keyCode == 27) {
-            this.console
-              .appendLines([
-                "",
-                "Cancel.",
-                "",
-                "Ejecting card. Please take your card.",
-                ""
-              ])
-              .then(() => {
-                Tools.removeEventHandler(handler);
-                this.cardreader.ejectCard();
-                this.cardreader.waitForTakeCard().then(resolve);
-              });
-          } else {
-            let num = Number(e.key);
-            if (num > 0 && num <= this.session.accounts.length) {
-              Tools.removeEventHandler(handler);
-              this.console
-                .appendLines([
-                  "",
-                  `You selected: ${this.session.accounts[num - 1].name}`,
-                  ""
-                ])
-                .then(() =>
-                  this.runManageAccount(this.session.accounts[num - 1])
-                );
-            } else {
-              Tools.play(Sounds.error);
-            }
-          }
-        },
-        this
-      );
-    });
-  }
-
-  // runManageAccount uses the selected account as a basis for executing deposits, withdrawals, and transfers
-  runManageAccount(account) {
-    return new Promise((resolve, reject) => {
-      switch (account.type) {
-        case "SAVINGS":
-          this.runManageSavings(account).then(() =>
-            this.accountListHeader()
-          );
-          break;
-        case "CREDIT":
-          this.runManageCredit(account).then(() =>
-            this.accountListHeader()
-          );
-          break;
-        case "LOAN":
-          this.runManageLoan(account).then(() =>
-            this.accountListHeader()
-          );
-          break;
-      }
-    });
-  }
-  runManageSavings(account) {
-    return new Promise((resolve, reject) => {
-      let options = [];
-      if (account.available > 0) {
-        options.push("Cash Withdrawal");
-        options.push("Funds Transfer");
-      }
-      options.push("Cash Deposit");
-      if (options.length < 1) {
-        this.console
-          .appendLines(["", "This account has no viable operations."])
-          .then(resolve);
-        return;
-      }
-      let prompt =
-        "Select an operation: " +
-        options.map((o, i) => `[${i + 1}] ${o}`).join(" ") +
-        " [ESC] Cancel:";
-      this.console.appendLines(["", prompt, ""]).then(() => {
-        let handler = Tools.addEventHandler(
-          document,
-          "keyup",
-          e => {
-            if (e.keyCode == 27) {
-              Tools.removeEventHandler(handler);
-              this.console.appendLines(["", "Cancel."]).then(resolve);
-            } else {
-              let num = Number(e.key);
-              if (num > 0 && num <= options.length) {
-                switch (options[num - 1]) {
-                  case "Cash Withdrawal":
-                    Tools.removeEventHandler(handler);
-                    this.console
-                      .appendLines([
-                        "",
-                        `You selected: Cash Withdrawal from ${account.name}`
-                      ])
-                      .then(() =>
-                        this.runWithdraw(
-                          "Cash Withdrawal",
-                          account,
-                          account.available
-                        )
-                      );
-                    break;
-                  case "Funds Transfer":
-                    Tools.removeEventHandler(handler);
-                    this.console
-                      .appendLines([
-                        "",
-                        `You selected: Funds Transfer from ${account.name}`
-                      ])
-                      .then(() => this.runTransfer(account));
-                    break;
-                  case "Cash Deposit":
-                    Tools.removeEventHandler(handler);
-                    this.console
-                      .appendLines([
-                        "",
-                        `You selected: Cash Deposit to ${account.name}`
-                      ])
-                      .then(() => this.runDeposit(account));
-                    break;
-                  default:
-                    Tools.play(Sounds.error);
-                }
-              } else {
-                Tools.play(Sounds.error);
-              }
-            }
-          },
-          this
-        );
-      });
-    });
-  }
-  runManageCredit(account) {
-    return new Promise((resolve, reject) => {
-      let options = [];
-      if (account.available > 0) {
-        options.push("Cash Advance");
-      }
-      if (account.available < account.limit) {
-        options.push("Make Cash Payment");
-      }
-      if (options.length < 1) {
-        this.console
-          .appendLines(["", "This account has no viable operations."])
-          .then(resolve);
-        return;
-      }
-      let prompt =
-        "Select an operation: " +
-        options.map((o, i) => `[${i + 1}] ${o}`).join(" ") +
-        " [ESC] Cancel:";
-      this.console.appendLines(["", prompt, ""]).then(() => {
-        let handler = Tools.addEventHandler(
-          document,
-          "keyup",
-          e => {
-            if (e.keyCode == 27) {
-              Tools.removeEventHandler(handler);
-              this.console.appendLines(["", "Cancel."]).then(reject);
-            } else {
-              let num = Number(e.key);
-              if (num > 0 && num <= options.length) {
-                switch (options[num - 1]) {
-                  case "Cash Advance":
-                    Tools.removeEventHandler(handler);
-                    this.console
-                      .appendLines([
-                        "",
-                        `You selected: Cash Advance from ${account.name}`
-                      ])
-                      .then(() =>
-                        this.runWithdraw(
-                          "Cash Advance",
-                          account,
-                          account.available
-                        )
-                      );
-                    break;
-                  case "Make Cash Payment":
-                    Tools.removeEventHandler(handler);
-                    this.console
-                      .appendLines([
-                        "",
-                        `You selected: Make Cash Payment to ${account.name}`
-                      ])
-                      .then(() =>
-                        this.runDeposit(account)
-                      );
-                    break;
-                  default:
-                    Tools.play(Sounds.error);
-                }
-              } else {
-                Tools.play(Sounds.error);
-              }
-            }
-          },
-          this
-        );
-      });
-    });
-  }
-  runManageLoan(account) {
-    return new Promise((resolve, reject) => {
-      let options = [];
-      if (account.hasRedraw && account.balance > account.limit) {
-        options.push("Redraw to Cash");
-        options.push("Redraw Transfer");
-      } else if (account.balance < 0) {
-        options.push("Make Cash Payment");
-      }
-      if (options.length < 1) {
-        this.console
-          .appendLines(["", "This account has no viable operations."])
-          .then(resolve);
-        return;
-      }
-      let prompt =
-        "Select an operation: " +
-        options.map((o, i) => `[${i + 1}] ${o}`).join(" ") +
-        " [ESC] Cancel:";
-      this.console.appendLines(["", prompt, ""]).then(() => {
-        let handler = Tools.addEventHandler(
-          document,
-          "keyup",
-          e => {
-            if (e.keyCode == 27) {
-              Tools.removeEventHandler(handler);
-              this.console.appendLines(["", "Cancel."]).then(() => reject);
-            } else {
-              let num = Number(e.key);
-              if (num > 0 && num <= options.length) {
-                switch (options[num - 1]) {
-                  case "Redraw to Cash":
-                    Tools.removeEventHandler(handler);
-                    this.console
-                      .appendLines([
-                        "",
-                        `You selected: Redraw to Cash from ${account.name}`
-                      ])
-                      .then(() =>
-                        this.runWithdraw(
-                          "Redraw Cash",
-                          account,
-                          account.limit - account.balance
-                        ).then(resolve, reject)
-                      );
-                    break;
-                  case "Redraw Transfer":
-                    Tools.removeEventHandler(handler);
-                    this.console
-                      .appendLines([
-                        "",
-                        `You selected: Redraw Transfer from ${account.name}`
-                      ])
-                      .then(() =>
-                        this.runTransfer(account)
-                      );
-                    break;
-                  case "Make Cash Payment":
-                    Tools.removeEventHandler(handler);
-                    this.console
-                      .appendLines([
-                        "",
-                        `You selected: Make Cash Payment to ${account.name}`
-                      ])
-                      .then(() =>
-                        this.runDeposit(account)
-                      );
-                    break;
-                  default:
-                    Tools.play(Sounds.error);
-                }
-              } else {
-                Tools.play(Sounds.error);
-              }
-            }
-          },
-          this
-        );
-      });
-    });
-  }
-  readAmount() {
-    return new Promise(resolve => {
+  async readAmount(prompt) {
+    await this.console.appendLines(["", prompt]);
+    return await new Promise(resolve => {
       let input = "";
       let handle = Tools.addEventHandler(
         document,
@@ -443,14 +91,17 @@ export class ATM {
       );
     });
   }
-  readKey(set) {
-    return new Promise(resolve => {
-      let input = "";
+  async readKey(prompt, set, cancel) {
+    await this.console.appendLines(["", prompt]);
+    return await new Promise(resolve => {
       let handle = Tools.addEventHandler(
         document,
         "keyup",
         e => {
-          if (set.indexOf(e.key) >= 0) {
+          if (e.keyCode == 27 && cancel) {
+            resolve(e.keyCode);
+          }
+          else if (set.indexOf(e.key) >= 0) {
             this.console.writeChar(e.key, true);
             Tools.removeEventHandler(handle);
             resolve(e.key);
@@ -462,174 +113,374 @@ export class ATM {
       );
     });
   }
-  runWithdraw(action, account, max) {
-    return new Promise(resolve => {
-      max = max > 500 ? 500 : max;
+  async getAccountList() {
+    try {
+      const response = await this.callAPI("listaccountsbytype", { type: "ALL" });
+      this.session.accounts = response.response.accounts;
+    }
+    catch (response) {
+      throw "Error: " + (response.response && response.response.error ? response.response.error : response);
+    }
+  }
+  async runEjectCard(reason) {
+    await this.console.appendLines(reason);
+    this.cardreader.ejectCard();
+    await this.cardreader.waitForTakeCard();
+  }
+  async runAccountsList() {
+    try {
+      while (true) {
+        await this.getAccountList();
+        await this.accountListHeader();
+        await this.listAccounts();
+        let account = await this.selectAccount();
+        await this.runManageAccount(account);
+      }
+    }
+    catch (response) {
+      await this.runEjectCard(["", response, ""]);
+    }
+  }
+  async accountListHeader() {
+    if (this.session.accounts.length > 0) {
+      await this.console
+        .appendLines(["", "You have " + this.session.accounts.length + " accounts:", "", ""]);
+      this.listAccounts();
+    } else {
+      throw "You do not have any accessible accounts.";
+    }
+  }
+  async listAccounts() {
+    await this.console.appendLines(this.session.accounts.map((a, i) => `${i + 1}: ${a.name} (${a.type}), Balance: ${a.balance.toFixed(2)}, Available: ${a.available.toFixed(2)}`));
+  }
+
+  async selectAccount() {
+    while (true) {
+      let key = await this.readKey(`Please select an account to manage (1 - ${this.session.accounts.length}, [ESC] to Cancel): `, this.session.accounts.map((a, i) => (i + 1)).join(""), true);
+      if (key == 27) {
+        throw "Cancel.";
+      } else {
+        let num = Number(e.key);
+        if (num > 0 && num <= this.session.accounts.length) {
+          await this.console.appendLines(["", `You selected: ${this.session.accounts[num - 1].name}`, ""]);
+          return this.session.accounts[num - 1];
+        } else {
+          Tools.play(Sounds.error);
+        }
+      }
+    }
+  }
+
+  // runManageAccount uses the selected account as a basis for executing deposits, withdrawals, and transfers
+  async runManageAccount(account) {
+    switch (account.type) {
+      case "SAVINGS":
+        await this.runManageSavings(account);
+        break;
+      case "CREDIT":
+        await this.runManageCredit(account);
+        break;
+      case "LOAN":
+        await this.runManageLoan(account);
+        break;
+    }
+  }
+  async runManageSavings(account) {
+    let options = [];
+    if (account.available > 0) {
+      options.push("Cash Withdrawal");
+      options.push("Funds Transfer");
+    }
+    options.push("Cash Deposit");
+    if (options.length < 1) {
       this.console
-        .appendLines([
-          "",
-          "Please enter an amount (max: " + max.toFixed(2) + "): "
-        ])
-        .then(() => {
-          this.readAmount().then(val => {
-            val = Number(val);
-            if (val > 0 && val <= max) {
-              this.console
-                .appendLines(["", action + ": " + val.toFixed(2) + "? (Y/N): "])
-                .then(() =>
-                  this.readKey("ynYN").then(key => {
-                    if (key == "Y" || key == "y") {
-                      this.callAPI("authorizewithdrawal", {
-                        account_id: account.account_id,
-                        amount: val
-                      }).then(response => {
-                        if (response.response.result == "success") {
-                          let lock = response.response.lock_id;
-                          this.dispenser.dispense(val).then(() => {
-                            this.callAPI("applywithdrawal", {
-                              lock_id: lock
-                            }).then(response => {
-                              account.total = response.response.balance.total;
-                              account.available = response.response.balance.available;
-                              account.limit = response.response.balance.limit;
-                              this.console.appendLines(["", `Cash dispensed. Receipt No: ${response.response.receipt_no}`, "", ""]).then(resolve);
-                            }, response => {
-                              this.console.appendLines(["",`Error:${response.response.error}`, ""]).then(resolve);
-                            });
-                          }, amount => {
-                             this.console.appendLines(["", `Cash dispensing failed, only ${amount.toFixed(2)} could be dispensed`,"Please attend a branch to arrange release of locked funds", ""]).then(resolve);
-                          });
-                        } else {
-                          this.console.appendLines(["","Could not lock funds for withdrawal: " + response.response.error, ""]).then(resolve);
-                        }
-                      }, response => {
-                        this.console.appendLines(["","Could not lock funds for withdrawal: " + response.response.error, ""]).then(resolve);
-                      });
-                    } else {
-                      this.console.appendLines(["", "Canceled.", ""]).then(resolve);
-                    }
-                  })
-                );
+        .appendLines(["", "This account has no viable operations."])
+        .then(resolve);
+      return;
+    }
+    let prompt = `Select an operation: ${options.map((o, i) => `[${i + 1}] ${o}`).join(" ")} [ESC] Cancel:`;
+    while (true) {
+      let key = await this.readKey(prompt, options.map((o, i) => i + 1).join(""), true);
+      if (key == 27) {
+        await this.console.appendLines("", "Cancel.", "");
+        return;
+      }
+      let num = Number(e.key);
+      if (num > 0 && num <= options.length) {
+        switch (options[num - 1]) {
+          case "Cash Withdrawal":
+            await this.console.appendLines("", `You selected: Cash Withdrawal from ${account.name}`);
+            await this.runWithdraw("Cash Withdrawal", account, account.available);
+            return;
+          case "Funds Transfer":
+            await this.console.appendLines("", `You selected: Funds Transfer from ${account.name}`);
+            await this.runTransfer("Funds Transfer", account);
+            return;
+          case "Cash Deposit":
+            await this.console.appendLines("", `You selected: Cash Deposit to ${account.name}`);
+            await this.runDeposit("Cash Deposit", account);
+            return;
+          default:
+            Tools.play(Sounds.error);
+        }
+      } else {
+        Tools.play(Sounds.error);
+      }
+    }
+  }
+  async runManageCredit(account) {
+    // return new Promise((resolve, reject) => {
+    //   let options = [];
+    //   if (account.available > 0) {
+    //     options.push("Cash Advance");
+    //   }
+    //   if (account.available < account.limit) {
+    //     options.push("Make Cash Payment");
+    //   }
+    //   if (options.length < 1) {
+    //     this.console
+    //       .appendLines(["", "This account has no viable operations."])
+    //       .then(resolve);
+    //     return;
+    //   }
+    //   let prompt =
+    //     "Select an operation: " +
+    //     options.map((o, i) => `[${i + 1}] ${o}`).join(" ") +
+    //     " [ESC] Cancel:";
+    //   this.console.appendLines(["", prompt, ""]).then(() => {
+    //     let handler = Tools.addEventHandler(
+    //       document,
+    //       "keyup",
+    //       e => {
+    //         if (e.keyCode == 27) {
+    //           Tools.removeEventHandler(handler);
+    //           this.console.appendLines(["", "Cancel."]).then(reject);
+    //         } else {
+    //           let num = Number(e.key);
+    //           if (num > 0 && num <= options.length) {
+    //             switch (options[num - 1]) {
+    //               case "Cash Advance":
+    //                 Tools.removeEventHandler(handler);
+    //                 this.console
+    //                   .appendLines([
+    //                     "",
+    //                     `You selected: Cash Advance from ${account.name}`
+    //                   ])
+    //                   .then(() =>
+    //                     this.runWithdraw(
+    //                       "Cash Advance",
+    //                       account,
+    //                       account.available
+    //                     )
+    //                   );
+    //                 break;
+    //               case "Make Cash Payment":
+    //                 Tools.removeEventHandler(handler);
+    //                 this.console
+    //                   .appendLines([
+    //                     "",
+    //                     `You selected: Make Cash Payment to ${account.name}`
+    //                   ])
+    //                   .then(() =>
+    //                     this.runDeposit(account)
+    //                   );
+    //                 break;
+    //               default:
+    //                 Tools.play(Sounds.error);
+    //             }
+    //           } else {
+    //             Tools.play(Sounds.error);
+    //           }
+    //         }
+    //       },
+    //       this
+    //     );
+    //   });
+    // });
+  }
+  async runManageLoan(account) {
+    // return new Promise((resolve, reject) => {
+    //   let options = [];
+    //   if (account.hasRedraw && account.balance > account.limit) {
+    //     options.push("Redraw to Cash");
+    //     options.push("Redraw Transfer");
+    //   } else if (account.balance < 0) {
+    //     options.push("Make Cash Payment");
+    //   }
+    //   if (options.length < 1) {
+    //     this.console
+    //       .appendLines(["", "This account has no viable operations."])
+    //       .then(resolve);
+    //     return;
+    //   }
+    //   let prompt =
+    //     "Select an operation: " +
+    //     options.map((o, i) => `[${i + 1}] ${o}`).join(" ") +
+    //     " [ESC] Cancel:";
+    //   this.console.appendLines(["", prompt, ""]).then(() => {
+    //     let handler = Tools.addEventHandler(
+    //       document,
+    //       "keyup",
+    //       e => {
+    //         if (e.keyCode == 27) {
+    //           Tools.removeEventHandler(handler);
+    //           this.console.appendLines(["", "Cancel."]).then(() => reject);
+    //         } else {
+    //           let num = Number(e.key);
+    //           if (num > 0 && num <= options.length) {
+    //             switch (options[num - 1]) {
+    //               case "Redraw to Cash":
+    //                 Tools.removeEventHandler(handler);
+    //                 this.console
+    //                   .appendLines([
+    //                     "",
+    //                     `You selected: Redraw to Cash from ${account.name}`
+    //                   ])
+    //                   .then(() =>
+    //                     this.runWithdraw(
+    //                       "Redraw Cash",
+    //                       account,
+    //                       account.limit - account.balance
+    //                     ).then(resolve, reject)
+    //                   );
+    //                 break;
+    //               case "Redraw Transfer":
+    //                 Tools.removeEventHandler(handler);
+    //                 this.console
+    //                   .appendLines([
+    //                     "",
+    //                     `You selected: Redraw Transfer from ${account.name}`
+    //                   ])
+    //                   .then(() =>
+    //                     this.runTransfer(account)
+    //                   );
+    //                 break;
+    //               case "Make Cash Payment":
+    //                 Tools.removeEventHandler(handler);
+    //                 this.console
+    //                   .appendLines([
+    //                     "",
+    //                     `You selected: Make Cash Payment to ${account.name}`
+    //                   ])
+    //                   .then(() =>
+    //                     this.runDeposit(account)
+    //                   );
+    //                 break;
+    //               default:
+    //                 Tools.play(Sounds.error);
+    //             }
+    //           } else {
+    //             Tools.play(Sounds.error);
+    //           }
+    //         }
+    //       },
+    //       this
+    //     );
+    //   });
+    // });
+  }
+  async runWithdraw(action, account, max) {
+    max = max > 500 ? 500 : max;
+    while (true) {
+      let amount = await this.readAmount(`Please enter an amount (max: ${max.toFixed(2)}): `);
+      let val = Number(amount);
+      if (val > 0 && val <= max) {
+        let key = await this.readKey(`${action}: ${val.toFixed(2)}? (Y/N): `, "YNyn", false);
+        if (key == 27) {
+          await this.console.appendLines("", "Canceled.", "");
+          return;
+        }
+        else if (key == "Y" || key == "y") {
+          try {
+            let response = await this.callAPI("authorizewithdrawal", {
+              account_id: account.account_id,
+              amount: val
+            });
+            if (response.response.result == "success") {
+              let lock = response.response.lock_id;
+              try
+              {
+                await this.dispenser.dispense(val);
+                try
+                {
+                  let response = await this.callAPI("applywithdrawal", {lock_id: lock});
+                  account.total = response.response.balance.total;
+                  account.available = response.response.balance.available;
+                  account.limit = response.response.balance.limit;
+                  await this.console.appendLines(["", `Cash dispensed. Receipt No: ${response.response.receipt_no}`, "", ""]);
+                  return;
+                }
+                catch(response) {
+                  await this.console.appendLines(["", `Error:${response.response.error}`, ""]);
+                  return;
+                }
+              }
+              catch(amount) {
+                await this.console.appendLines(["", `Cash dispensing failed, only ${amount.toFixed(2)} could be dispensed`, "Please attend a branch to arrange release of locked funds", ""]);
+                return;
+              }
             } else {
-              this.console
-                .appendLines(["", "Invalid amount entered."])
-                .then(() =>
-                  this.runWithdraw(action, account, max)
-                );
+              await this.console.appendLines(["", "Could not lock funds for withdrawal: " + response.response.error, ""]);
+              return;
             }
-          });
-        });
-    });
+          }
+          catch (response) {
+            await this.console.appendLines(["", "Could not lock funds for withdrawal: " + response.response.error, ""]);
+            return;
+          }
+        }
+      } else {
+        await this.console.appendLines(["", "Invalid amount entered."]);
+        Tools.play(Sounds.error);
+      }
+    }
   }
   runTransfer(account) {
-    return new Promise((resolve, reject) => {});
+    return new Promise((resolve, reject) => { });
   }
   runDeposit(account) {
-    return new Promise((resolve, reject) => {});
+    return new Promise((resolve, reject) => { });
   }
   waitForCard() {
-    return this.console
-      .display([
-        "DSC Bank of Daytona - Your Education, Our Money",
-        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-        "Automatch Teller Machine#: " + this.id,
-        "",
-        "Please insert your membership card to begin...",
-        ""
-      ])
-      .then(() =>
-        this.cardreader
-          .waitForCard()
-          .then(cardnumber =>
-            this.console
-              .appendLines(["", `Card number: ${cardnumber}`, ""])
-              .then(() => this.waitForPIN(cardnumber))
-          )
-      );
+    do {
+      await this.console.display("DSC Bank of Daytona - Your Education, Our Money", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", `Automatch Teller Machine#: ${this.id}`, "", "Please insert your membership card to begin...", "");
+      let cardnumber = await this.cardreader.waitForCard();
+      await this.console.appendLines(["", `Card number: ${cardnumber}`, ""]);
+    }
+    while (!this.waitForPIN(cardnumber));
   }
-  waitForPIN(cardnumber) {
-    return new Promise((resolve, reject) => {
-      this.console
-        .appendLines([
-          "",
-          "Please enter your personal identification number (PIN), [ESC] to cancel, [ENTER] to confirm.",
-          ""
-        ])
-        .then(() =>
-          this.pinreader.waitForPIN().then(
-            pin => {
-              this.session = {
-                session_id: new Date().getTime() + "_SESSION"
-              };
-              this.callAPI("authenticatebycard", {
-                card_number: cardnumber,
-                pin: pin
-              }).then(
-                response => {
-                  if (response.response.result === "success") {
-                    this.session.valid_to = response.response.valid_to;
-                    this.session.name = response.response.name;
-                    this.session.firstName = response.response.firstName;
-                    resolve();
-                  } else {
-                    if (response.response.failure_count >= 3) {
-                      Tools.play(Sounds.error);
-                      this.console
-                        .appendLines([
-                          "Verification failed. PIN incorrect.",
-                          "",
-                          "",
-                          "Attempts Exceeded. Card captured.",
-                          "Please attend a DSC Bank Daytona branch to retrieve your card",
-                          ""
-                        ])
-                        .then(() => {
-                          this.cardreader.captureCard();
-                          setTimeout(reject, 2000);
-                        });
-                    } else {
-                      Tools.play(Sounds.error);
-                      this.console
-                        .appendLines([
-                          "",
-                          "Verification failed. PIN incorrect.",
-                          ""
-                        ])
-                        .then(() => this.waitForPIN(cardnumber));
-                    }
-                  }
-                },
-                response => {
-                  this.console
-                    .appendLines([
-                      "",
-                      "Error: " + response.response && response.response.error
-                        ? response.response.error
-                        : "Unknown error occurred!",
-                      "Ejecting card. Please take your card.",
-                      ""
-                    ])
-                    .then(() => {
-                      this.cardreader.ejectCard();
-                      this.waitForTakeCard().then(reject());
-                    });
-                }
-              );
-            },
-            () => {
-              this.console
-                .appendLines([
-                  "",
-                  "Canceled.",
-                  "Ejecting card. Please take your card."
-                ])
-                .then(() => {
-                  this.cardreader.ejectCard();
-                  this.cardreader.waitForTakeCard().then(reject);
-                });
-            }
-          )
-        );
-    }).then(() => this.runAccountsList(), () => this.waitForCard());
+  async waitForPIN(cardnumber) {
+    while (true){
+      await this.console.appendLines("", "Please enter your personal identification number (PIN), [ESC] to cancel, [ENTER] to confirm.", "");
+      let pin = await this.pinreader.waitForPIN();
+      this.session = {
+        session_id: new Date().getTime() + "_SESSION"
+      };
+      try
+      {
+        let response = this.callAPI("authenticatebycard", { card_number: cardnumber, pin: pin });
+        if (response.response.result === "success") {
+          this.session.valid_to = response.response.valid_to;
+          this.session.name = response.response.name;
+          this.session.firstName = response.response.firstName;
+          return true;
+        } else {
+          if (response.response.failure_count >= 3) {
+            Tools.play(Sounds.error);
+            await this.console.appendLines("Verification failed. PIN incorrect.", "", "", "Attempts Exceeded. Card captured.", "Please attend a DSC Bank Daytona branch to retrieve your card", "");
+            this.cardreader.captureCard();
+            await new Promise(resolve => {
+              setTimeout(resolve, 2000);
+            });
+            return false;
+          } else {
+            Tools.play(Sounds.error);
+            await this.console.appendLines("", "Verification failed. PIN incorrect.","");
+          }
+        }      
+      } catch (response) {
+        throw response.response && response.response.error ? response.response.error : "Unknown error occurred!";
+      }
+    }
   }
 }
