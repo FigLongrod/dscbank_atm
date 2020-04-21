@@ -344,7 +344,7 @@ export class ATM {
                   account.total = response.response.balance.total;
                   account.available = response.response.balance.available;
                   account.limit = response.response.balance.limit;
-                  await this.printer.print("withdrawal", `${account.account_id}:${account.name}`, 'CASH', amount, response.response.receipt_no);
+                  await this.printer.print("withdrawal", `${account.account_id}:${account.name}`, 'CASH', val, response.response.receipt_no);
                   await this.console.appendLines(`¶¶Cash dispensed. Receipt No: ${response.response.receipt_no}¶`);
                   return;
                 }
