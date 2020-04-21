@@ -122,7 +122,8 @@ export class ATM {
   }
   async runEjectCard(reason) {
     await this.console.appendLines(reason);
-    this.cardreader.ejectCard();
+    await this.console.appendLines("Ejecting card. Please take your card.")
+    await this.cardreader.ejectCard();
     await this.cardreader.waitForTakeCard();
   }
   async runAccountsList() {

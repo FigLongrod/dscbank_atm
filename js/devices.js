@@ -107,30 +107,32 @@ export class ATMCardReader {
     this.card = null;
     this.locked = false;
   }
-  waitForCard() {
-    return new Promise(resolve => {
+  async waitForCard() {
+    return await new Promise(resolve => {
       let handle = setInterval(() => {
         if (this.hasCard) {
           clearInterval(handle);
           this.red.style.display = "none";
           this.green.style.display = "block";
-          Tools.play(Sounds.cardreader).then(() => resolve(this.card.cardNumber));
+          await Tools.play(Sounds.pinbutton);
+          return this.card.cardNumber;
         }
       }, 10);
     })
-
   }
-  insertCard(card) {
+  async insertCard(card) {
     if (!this.hasCard) {
       this.card = card;
       this.hasCard = true;
       this.locked = true;
       document.dispatchEvent(new CustomEvent("remove-card", { detail: this.card }));
+      await Tools.play(Sounds.cardreader);
     }
   }
-  ejectCard() {
+  async ejectCard() {
     this.locked = false;
     this.element.style.cursor = "pointer";
+    await Tools.play(Sounds.pinbutton);
     let handle = Tools.addEventHandler(this.element, "click", () => {
       this.element.style.cursor = "not-allowed";
       document.dispatchEvent(new CustomEvent("add-card", { detail: this.card }));
@@ -140,14 +142,14 @@ export class ATMCardReader {
       Tools.removeEventHandler(handle);
     }, this);
   }
-  waitForTakeCard() {
-    return new Promise(resolve => {
+  async waitForTakeCard() {
+    await new Promise(resolve => {
       let handle = setInterval(() => {
         if (!this.hasCard) {
           clearInterval(handle);
           this.red.style.display = "block";
           this.green.style.display = "none";
-          Tools.play(Sounds.cardreader).then(resolve);
+          await Tools.play(Sounds.cardreader);
         }
       }, 10);
     });
