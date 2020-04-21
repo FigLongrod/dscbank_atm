@@ -213,15 +213,15 @@ export class ATM {
       if (num > 0 && num <= options.length) {
         switch (options[num - 1]) {
           case "Cash Withdrawal":
-            await this.console.appendLines(`¶You selected: Cash Withdrawal from ${account.name}¶`);
+            await this.console.appendLines(`¶¶You selected: Cash Withdrawal from ${account.name}¶`);
             await this.runWithdraw("Cash Withdrawal", account, account.available);
             return;
           case "Funds Transfer":
-            await this.console.appendLines(`¶You selected: Funds Transfer from ${account.name}¶`);
+            await this.console.appendLines(`¶¶You selected: Funds Transfer from ${account.name}¶`);
             await this.runTransfer("Funds Transfer", account);
             return;
           case "Cash Deposit":
-            await this.console.appendLines(`¶You selected: Cash Deposit to ${account.name}¶`);
+            await this.console.appendLines(`¶¶You selected: Cash Deposit to ${account.name}¶`);
             await this.runDeposit("Cash Deposit", account);
             return;
           default:
@@ -502,7 +502,7 @@ export class ATM {
           break;
       }
       max = destMax < max ? max : destMax;
-      let amount = this.readAmount(`¶Please enter an amount (max: ${max.toFixed(2)}): `);
+      let amount = await this.readAmount(`¶Please enter an amount (max: ${max.toFixed(2)}): `);
       switch (await this.readKey(`¶${action} ${amount.toFixed} from ${account.name} to ${destination.name}? (Y/N): `, "YNyn", false)) {
         case "N":
         case "n":
