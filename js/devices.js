@@ -292,7 +292,7 @@ export class ATMConsole {
     if (Array.isArray(lines)) {
       await this.appendText(lines.join('`'))
     } else {
-      await this.appendText(arguments.length > 1 ? Array.from(arguments).join('`') : [lines]);
+      await this.appendText(arguments.length > 1 ? Array.from(arguments).join('`') : lines);
     }
   }
   async display() {
