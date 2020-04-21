@@ -268,13 +268,14 @@ export class ATMReceiptPrinter {
     if (this.currentReceipt) {
       this.currentReceipt.fall();
     }
-    await Tools.play(Sounds.receipt);
-    let receipt = new Receipt(this, action, from, to, amount, receipt_no);
-    let div = receipt.get();
-    this.element.appendChild(div);
-    let ppos = this.getCenters(this.element);
-    receipt.setPosition(ppos.x - (div.offsetWidth / 2), ppos.y);    
-    this.currentReceipt = receipt;
+    await Tools.play(Sounds.receipt).then(()  => {
+      let receipt = new Receipt(this, action, from, to, amount, receipt_no);
+      let div = receipt.get();
+      this.element.appendChild(div);
+      let ppos = this.getCenters(this.element);
+      receipt.setPosition(ppos.x - (div.offsetWidth / 2), ppos.y);    
+      this.currentReceipt = receipt;
+    });
   }
 }
 
