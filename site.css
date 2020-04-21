@@ -106,12 +106,12 @@ div#dispenser {
 div.note {
   position: absolute;
   top: 10px;
-  left: 10px;
+  left: 8px;
   background-image: url(./media/images/money.jpg);
   background-size: 347px;
   height: 70px;
-  width: 163px;
-  background-position: 0% 0%;
+  width: 170px;
+  background-position: -2px 0%;
   cursor: pointer;
 }
 div.note-100 {
