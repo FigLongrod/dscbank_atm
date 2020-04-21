@@ -142,9 +142,8 @@ export class ATM {
   }
   async accountListHeader() {
     if (this.session.accounts.length > 0) {
-      await this.console
-        .appendLines(["", "You have " + this.session.accounts.length + " accounts:", "", ""]);
-      this.listAccounts();
+      await this.console.appendLines("", `You have ${this.session.accounts.length} accounts:`, "", "");
+      await this.listAccounts();
     } else {
       throw "You do not have any accessible accounts.";
     }
