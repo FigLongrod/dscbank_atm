@@ -385,6 +385,15 @@ export class FinancialHost {
             })
           );
         case "authorizewithdrawal":
+          if (member.canTransact() !== "OKAY") {
+            reject(
+              this.error(
+                request,
+                "DAILY_LIMIT_EXCEEDED",
+                "The member has already performed the maximum number of transactions today"
+              )
+            );
+          }
           if (!request.request.account_id) {
             reject(
               this.error(request, "INVALID_ACCOUNT", "No account specified")
