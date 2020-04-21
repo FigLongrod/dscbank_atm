@@ -326,14 +326,14 @@ export class FinancialHost {
               resolve(
                 this.response(request, {
                   result: "success",
-                  accounts: member.accounts.filter(a => a.id !== source.id).map(mapAccount)
+                  accounts: member.accounts.filter(a => a.id !== source.id && !(a.type == "LOAN" && a.balance.total == 0)).map(mapAccount)
                 })
               );
             case "deposit":
               resolve(
                 this.response(request, {
                   result: "success",
-                  accounts: member.accounts(mapAccount)
+                  accounts: member.accounts.filter(a =>  !(a.type == "LOAN" && a.balance.total == 0)).map(mapAccount)
                 })
               );
             case "withdraw":
@@ -341,7 +341,7 @@ export class FinancialHost {
                 this.response(request, {
                   result: "success",
                   accounts: member.accounts.filter(
-                    a => a.type !== "LOAN" || a.hasRedraw
+                    a => a.type !== "LOAN" || (a.hasRedraw && a.balance.total < 0)
                   )
                 })
               );
