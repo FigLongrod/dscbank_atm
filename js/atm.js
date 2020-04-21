@@ -218,7 +218,7 @@ export class ATM {
             return;
           case "Funds Transfer":
             await this.console.appendLines(`¶¶You selected: Funds Transfer from ${account.name}¶`);
-            await this.runTransfer("Funds Transfer", account);
+            await this.runTransfer("Funds Transfer", account, account.available);
             return;
           case "Cash Deposit":
             await this.console.appendLines(`¶¶You selected: Cash Deposit to ${account.name}¶`);
