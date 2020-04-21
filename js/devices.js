@@ -148,7 +148,7 @@ export class ATMCardReader {
           clearInterval(handle);
           this.red.style.display = "block";
           this.green.style.display = "none";
-          await Tools.play(Sounds.cardreader);
+          Tools.play(Sounds.cardreader).then(resolve);
         }
       }, 10);
     });
