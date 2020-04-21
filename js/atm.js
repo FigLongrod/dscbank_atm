@@ -469,9 +469,9 @@ export class ATM {
       await this.console.appendLines(`¶${response.response.accounts.map((a, i) => `[${i + 1}] ${a.name}`).join('¶')}¶`);
       let destination = null;
       while (!destination) {
-        let key = await this.readKey(`¶Select account (1 - ${response.response.accounts.length}, [ESC] to cancel)`, response.response.accounts.map((a, i) => (i + 1)).join(''), true);
+        let key = await this.readKey(`¶Select account (1 - ${response.response.accounts.length}, [ESC] to cancel): `, response.response.accounts.map((a, i) => (i + 1)).join(''), true);
         if (key == 27) {
-          await this.console.appendLines("¶Canceled.¶");
+          await this.console.appendLines("¶¶Canceled.¶");
           return;
         }
         let num = Number(key);
@@ -484,10 +484,11 @@ export class ATM {
             destination = destination[0];
           }
         } else {
-          await this.console.appendLines("¶Invalid account selection¶");
+          await this.console.appendLines("¶¶Invalid account selection¶");
           await Tools.play(Sounds.error);
         }
       }
+      await this.console.appendLines(`¶¶You selected ${action} from ${account.name} to ${destination.name}¶`);
       // now we have both accounts, we need to determine the maximum transfer amount
       let destMax = 0;
       switch (destination.type) {
@@ -503,10 +504,10 @@ export class ATM {
       }
       max = destMax < max ? max : destMax;
       let amount = await this.readAmount(`¶Please enter an amount (max: ${max.toFixed(2)}): `);
-      switch (await this.readKey(`¶${action} ${amount.toFixed} from ${account.name} to ${destination.name}? (Y/N): `, "YNyn", false)) {
+      switch (await this.readKey(`¶¶${action} ${amount.toFixed} from ${account.name} to ${destination.name}? (Y/N): `, "YNyn", false)) {
         case "N":
         case "n":
-          await this.console.appendLines("¶Canceled.¶");
+          await this.console.appendLines("¶¶Canceled.¶");
           return;
         case "Y":
         case "y":
@@ -520,12 +521,12 @@ export class ATM {
               destination.total = response.response.destination.balance.total;
               destination.available = response.response.destination.balance.available;
               destination.limit = response.response.destination.balance.limit;
-              await this.appendLines(`¶${action} complete. Receipt No: ${response.response.receipt_no}¶`);
+              await this.appendLines(`¶¶${action} complete. Receipt No: ${response.response.receipt_no}¶`);
               return;
             }
           }
           catch (response) {
-            await this.appendLines(`¶Error: ${response.response.error}¶`);
+            await this.appendLines(`¶¶Error: ${response.response.error}¶`);
             return;
           }
         default:
