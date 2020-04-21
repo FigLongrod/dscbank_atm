@@ -207,8 +207,8 @@ export class ATMPinReader {
 class Receipt {
   constructor(action, from, to, amount, receipt_no) {
     this.div = document.createElement("div");
-    div.className = "receipt";
-    div.innerHTML = `"<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
+    this.div.className = "receipt";
+    this.div.innerHTML = `"<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
   }
   get() {
     return this.div;
@@ -233,7 +233,7 @@ class Receipt {
     }, 100);
   }
   onScreen() {
-    var bounds = this.element.getBoundingClientRect();
+    let bounds = this.element.getBoundingClientRect();
     if( bounds.top > window.innerHeight) {
      return false;
     }
