@@ -263,7 +263,8 @@ export class FinancialHost {
         name: a.name,
         balance: a.balance.total,
         available: a.balance.available(),
-        limit: a.balance.limit
+        limit: a.balance.limit,
+        hasRedraw: a.hasRedraw
       });
       switch (call) {
         case "listaccountsbytype":

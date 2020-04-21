@@ -498,7 +498,7 @@ export class ATM {
           destMax = destination.limit - destination.total;
           break;
         case "LOAN":
-          destMax = -1 * (destination.limit + destination.total);
+          destMax = destination.limit != 0 ? -(destination.limit - destination.balance) : -destination.balance;
           break;
       }
       max = destMax < max ? max : destMax;
