@@ -140,10 +140,14 @@ div.note {
   cursor: pointer;
   box-shadow: 1px 1px 1px rgba(0,0,0,0.25);
 }
+div#cash {
+  position: relative;
+    left: 415px;
+}
 div#cash div.note {
-  background-size: 208% 730% !important;
+  background-size: 208% 740% !important;
   width: 340px;
-  height: 170px;
+  height: 150px;
   background-position-y: -2px;
   background-position-x: -7px;
 }
@@ -151,29 +155,51 @@ div#cash div.note {
 div.note-100 {
   background-position-y: -456px;
 }
+div#cash div.note-100 {
+  background-position-y: -562px;
+}
 
 div.note-50 {
   background-position-y: -381px;
 }
+div#cash div.note-50 {
+  background-position-y: -487px;
+}
+
 
 div.note-20 {
   background-position-y: -305px;
+}
+div#cash div.note-20 {
+  background-position-y: -411px;
 }
 
 div.note-10 {
   background-position-y: -229px;
 }
+div#cash div.note-10 {
+  background-position-y: -335px;
+}
 
 div.note-5 {
   background-position-y: -152px;
 }
+div#cash div.note-5 {
+  background-position-y: -258px;
+}
 div.note-2 {
   background-position-y: -78px;
 }
-
+div#cash div.note-2 {
+  background-position-y: -184px;
+}
 div.note-1 {
   background-position-y: -0px;
 }
+div#cash div.note-1 {
+background-position-y: -2px;
+}
+
 div#printer {
   position: relative;
   height: 10px;

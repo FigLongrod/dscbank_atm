@@ -33,7 +33,7 @@ class Cash {
                 div.style.transform = `translate(${(Math.random() * 6) - 3}px,${(Math.random() * 6) - 3}px) rotate(${(Math.random() * 6) - 3}deg)`;
                 this.element.appendChild(div);
             }
-            offs += 20;
+            offs += 40;
         });
     }
 }
