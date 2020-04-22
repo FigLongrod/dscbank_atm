@@ -231,14 +231,14 @@ class Receipt {
   fall() {
     Tools.play(Sounds.rip);
     let handle = setInterval(() => {
-      this.y += 10;
+      this.y += 1;
       this.move();
       if (!this.onScreen()){
         console.log('Receipt fell on the ground');
         clearInterval(handle);
         this.div.remove();
       }
-    }, 100);
+    }, 200);
   }
   onScreen() {
     let bounds = this.div.getBoundingClientRect();
