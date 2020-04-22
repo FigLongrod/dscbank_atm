@@ -3,17 +3,25 @@
 body {
   font-family: helvetica, arial, sans-serif;
   margin: 2em;
+  padding-left: 20px;
 }
 
 h1 {
   font-style: italic;
   color: #373fff;
 }
-
+td.console {
+  border: 18px inset #3e3e3e;
+  background-color: black;
+  padding: 0 5px;
+  border-radius: 15px 15px 15px 15px;
+}
 table#console {
   background-color: black;
   color: limegreen;
   border-collapse: collapse;
+  background: linear-gradient(133deg, rgba(0,0,0,1) 0%, rgb(27, 27, 27) 24%, rgb(29, 29, 29) 51%, rgb(0, 0, 0) 80%, rgba(0,0,0,1) 100%);
+  text-shadow: 2px -2px 4px #01ff38;
 }
 
 table#console td {
