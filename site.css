@@ -135,8 +135,9 @@ div#dispenser {
   width: 184px;
   margin: 0;
   background-color: black;
-  border: 3px ridge darkgray;
-  margin-left: 18px;
+  border: 8px inset darkgray;
+  margin-left: 14px;
+  background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(13,13,13,1) 81%, rgba(69,69,69,1) 100%);
 }
 div.note {
   position: absolute;
