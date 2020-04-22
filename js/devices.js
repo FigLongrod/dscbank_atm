@@ -211,6 +211,7 @@ class Receipt {
     this.printer = printer;
     this.y = 0;
     this.x = 0;
+    this.rotate = 0;
     this.div.innerHTML = `<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
     let handle = Tools.addEventHandler(this.div, "click", () => {
       Tools.play(Sounds.rip, 0.25).then(() => {
@@ -227,11 +228,12 @@ class Receipt {
     Tools.play(Sounds.rip, 0.25);
     let handle = setInterval(() => {
       this.y += 5;
-      this.x += Math.floor((Math.random() * 60)) - 30;
+      this.x += Math.floor(Math.random() * 60) - 30;
       this.div.style.top = `${this.y}px`;
       this.div.style.left = `${this.x}px`;
-      this.div.transform = `rotate(${Math.floor(Math.random() * 4) - 2}deg)`;
-      if (y > 1000) {
+      this.rotate += Math.floor(Math.random() * 8) - 4;
+      this.div.style.transform = `rotate(${this.rotate}deg)`;
+      if (this.y > 1000) {
         console.log('Receipt fell on the ground');
         clearInterval(handle);
         this.div.remove();
