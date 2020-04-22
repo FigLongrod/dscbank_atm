@@ -43,6 +43,9 @@ export class ATMCashDispenser {
     console.log(`Dispensing a $${note} note`);
     let noteDiv = document.createElement('div');
     noteDiv.className = "note note-" + note;
+    noteDiv.style.left = `${8 + Math.floor(Math.random() * 8) - 4}px`;
+    noteDiv.style.left = `${10 + Math.floor(Math.random() * 6) - 3}px`;
+    noteDiv.style.transform = `rotate(${Math.floor(Math.random() * 10)}deg)`;
     this.element.appendChild(noteDiv);
     Tools.addEventHandler(noteDiv, "click", () => {
       Tools.play(Sounds.take_note).then(() => noteDiv.remove());
