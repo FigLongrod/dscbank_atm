@@ -226,13 +226,15 @@ class Receipt {
     Tools.play(Sounds.rip);
     let handle = setInterval(() => {
       this.y += 1;
+      this.x += 0.25;
       this.div.style.top = `${this.y}px`;
+      this.div.style.left = `${this.x}px`;
       if (!this.onScreen()){
         console.log('Receipt fell on the ground');
         clearInterval(handle);
         this.div.remove();
       }
-    }, 2000);
+    }, 200);
   }
   onScreen() {
     let bounds = this.div.getBoundingClientRect();
@@ -267,7 +269,11 @@ export class ATMReceiptPrinter {
     await Tools.play(Sounds.receipt).then(()  => {
       let receipt = new Receipt(this, action, from, to, amount, receipt_no);
       let div = receipt.get();
-      this.element.appendChild(div);
+      if (this.currentReceipt != null) {
+        div.insertBefore(this.currentReceipt.get());
+      } else {
+        this.element.appendChild(div);
+      }
       let ppos = this.getCenters(this.element);
       receipt.setPosition(ppos.x - (div.offsetWidth / 2), ppos.y);    
       this.currentReceipt = receipt;
