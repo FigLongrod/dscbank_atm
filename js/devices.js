@@ -234,7 +234,7 @@ class Receipt {
       this.x = Math.floor(Math.random() * 30) - 60;
       this.rotate = Math.floor(Math.random() * 4) * (this.x < 0 ? 1 : -1);
       this.div.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotate}deg)`;
-      if (this.y > 1000) {
+      if (this.y > 400) {
         console.log('Receipt fell on the ground');
         clearInterval(handle);
         this.div.remove();
