@@ -56,7 +56,7 @@ export class ATM {
   async init() {
     await Tools.play(Sounds.startup);
     await this.host.init();
-    await this.console.display(art);
+    //await this.console.display(art);
     while (true) {
       await this.waitForCard();
     }
