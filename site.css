@@ -163,6 +163,9 @@ div#cash div.note {
   background-position-x: -7px;
   transform-origin: right center;
 }
+div#cash div.note:hover {
+  z-index: 1000 !important;
+}
 
 div.note-100 {
   background-position-y: -456px;
