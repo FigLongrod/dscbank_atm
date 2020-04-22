@@ -1,5 +1,5 @@
 import {ATM} from './atm.js';
-import {Cards} from './cards.js';
+import {Wallet} from './wallet.js';
 
 console.log("App Initialising");
 
@@ -10,6 +10,6 @@ let atm = new ATM(
     document.getElementById("dispenser"),
     document.getElementById("printer")
 );
-let cards = new Cards(document.getElementById("cards"), atm.cardreader);
-cards.init().then(() => cards.draw());
+let wallet = new Wallet(document.getElementById("cards"), document.getElementById("cash"), atm.cardreader, atm.cashreader);
+wallet.init().then(() => wallet.draw());
 atm.init();
