@@ -23,7 +23,7 @@ class Cash {
     draw() {
         this.element.innerHTML = "";
         let z = 2;
-        let offs = 0;
+        let offs = 80;
         ["100", "50", "20", "10", "5", "2", "1"].forEach(note => {
             for (let i = 0; i < this.notes[note]; i++) {
                 let div = document.createElement("div");

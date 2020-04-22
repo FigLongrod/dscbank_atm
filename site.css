@@ -156,14 +156,15 @@ div.note-100 {
   background-position-y: -456px;
 }
 div#cash div.note-100 {
-  background-position-y: -562px;
+  background-position-y: -988px;
+  background-size: 208% 760% !important;
 }
 
 div.note-50 {
   background-position-y: -381px;
 }
 div#cash div.note-50 {
-  background-position-y: -487px;
+  background-position-y: -803px;
 }
 
 
@@ -171,27 +172,29 @@ div.note-20 {
   background-position-y: -305px;
 }
 div#cash div.note-20 {
-  background-position-y: -411px;
+  background-position-y: -643px;
+  background-size: 210% 742% !important;
+  background-position-x: -10px;
 }
 
 div.note-10 {
   background-position-y: -229px;
 }
 div#cash div.note-10 {
-  background-position-y: -335px;
+  background-position-y: -480px;
 }
 
 div.note-5 {
   background-position-y: -152px;
 }
 div#cash div.note-5 {
-  background-position-y: -258px;
+  background-position-y: -319px;
 }
 div.note-2 {
   background-position-y: -78px;
 }
 div#cash div.note-2 {
-  background-position-y: -184px;
+  background-position-y: -162px;
 }
 div.note-1 {
   background-position-y: -0px;
