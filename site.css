@@ -166,6 +166,7 @@ div.receipt {
   width: 180px;
   margin-left: 4px;
   cursor: pointer;
+  position: relative;
 }
 div.receipt h4 {
   text-align: center;

@@ -209,6 +209,7 @@ class Receipt {
     this.div = document.createElement("div");
     this.div.className = "receipt";
     this.printer = printer;
+    this.y = 0;
     this.div.innerHTML = `<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
     let handle = Tools.addEventHandler(this.div, "click", () => {
       Tools.play(Sounds.rip).then(() => {
@@ -221,30 +222,25 @@ class Receipt {
   get() {
     return this.div;
   }
-  setPosition(x,y) {
-    this.x = x;
-    this.y = y;
-  }
-  move(){
-    this.div.style.transform = `translate(${this.x}px, ${this.y}px)`;
-  }
   fall() {
     Tools.play(Sounds.rip);
     let handle = setInterval(() => {
       this.y += 1;
-      this.move();
+      this.div.style.top = `${this.y}px`;
       if (!this.onScreen()){
         console.log('Receipt fell on the ground');
         clearInterval(handle);
         this.div.remove();
       }
-    }, 200);
+    }, 2000);
   }
   onScreen() {
     let bounds = this.div.getBoundingClientRect();
     if( bounds.top > window.innerHeight) {
+      console.log('off screen');
      return false;
     }
+    console.log('on screen');
     return true;
   }
 }
