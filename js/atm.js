@@ -465,6 +465,7 @@ export class ATM {
               destination.total = response3.response.destination.balance.total;
               destination.available = response3.response.destination.balance.available;
               destination.limit = response3.response.destination.balance.limit;
+              await this.printer.print(action, `${account.account_id}:${account.name}`, `${destination.account_id}:${destination.name}`, amount, response.response.receipt_no);
               await this.console.appendLines(`¶¶${action} complete. Receipt No: ${response3.response.receipt_no}¶`);
               return;
             }
