@@ -72,7 +72,7 @@ div.card {
   position: absolute;
   box-shadow: 3px 3px rgba(0,0,0,0.25);
   background: linear-gradient(133deg, rgba(70,130,180,1) 0%, rgba(213,226,238,1) 39%, rgba(255,255,255,1) 51%, rgba(238,243,248,1) 64%, rgba(70,130,180,1) 100%);
-  transition: transform 0.2s linear;
+  transition: left 0.2s linear;
 }
 div.card:hover {
   z-index: 20 !important;
