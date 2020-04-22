@@ -100,8 +100,8 @@ div.card h4 {
   font-size: 13px;
   font-family: monospace;
   position: absolute;
-  top: 90px;
-  left: 20px;
+  top: 95px;
+  left: 25px;
 }
 
 div.card:hover {
@@ -123,11 +123,12 @@ img.card-chip {
   height: 45px;
 }
 img.card-vasi {
-  position: relative;
+  position: absolute;
   left: 200px;
-  top: 40px;
-  width: 40px;
-  height: 30px;;
+  top: 80px;
+  width: 50px;
+  height: 30px;
+  border: 1px solid white;
 }
 div#dispenser {
   height: 90px;
@@ -159,6 +160,7 @@ div#cash div.note {
   height: 150px;
   background-position-y: -2px;
   background-position-x: -7px;
+  transform-origin: right center;
 }
 
 div.note-100 {
