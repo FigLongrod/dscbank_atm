@@ -140,7 +140,13 @@ div.note {
   cursor: pointer;
   box-shadow: 1px 1px 1px rgba(0,0,0,0.25);
 }
-
+div#cash div.note {
+  background-size: 208% 730% !important;
+  width: 340px;
+  height: 170px;
+  background-position-y: -2px;
+  background-position-x: -7px;
+}
 
 div.note-100 {
   background-position-y: -456px;
