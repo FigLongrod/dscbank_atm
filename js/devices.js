@@ -218,13 +218,13 @@ class Receipt {
     this.div.innerHTML = `<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
     this.div.style.transition = "transform 0.2s linear";
     let handle = Tools.addEventHandler(this.div, "click", () => {
-      Tools.play(Sounds.rip, 0.25);
-      this.printer.removeReceipt(this);
-      this.fall();
-      // Tools.play(Sounds.rip, 0.25).then(() => {
-      //   Tools.removeEventHandler(handle);
-      //   this.div.remove(); 
-      // });
+      // Tools.play(Sounds.rip, 0.25);
+      // this.printer.removeReceipt(this);
+      // this.fall();
+      Tools.play(Sounds.rip, 0.25).then(() => {
+        Tools.removeEventHandler(handle);
+        this.div.remove(); 
+      });
     });
   }
   get() {
@@ -235,7 +235,7 @@ class Receipt {
     let handle = setInterval(() => {
       this.y += 5;
       this.x = Math.floor(Math.random() * 30) - 60;
-      this.rotate += Math.floor(Math.random() * 4) - 8;
+      this.rotate = Math.floor(Math.random() * 4) - 8;
       this.div.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotate}deg)`;
       if (this.y > 1000) {
         console.log('Receipt fell on the ground');
