@@ -125,6 +125,7 @@ export class ATM {
       this.session.accounts = response.response.accounts;
     }
     catch (response) {
+      this.console.log(response);
       throw "Error: " + (response.response && response.response.error ? response.response.error : response);
     }
   }
