@@ -38,10 +38,11 @@ export class Cards {
   }
   draw() {
     this.element.innerHTML = "";
-    this.cards.forEach(c => {
+    this.cards.forEach((c,i) => {
       let card = document.createElement("div");
       card.className = "card";
       card.id = "card-" + c.id;
+      card.style.zIndex = i + 2;
       card.innerHTML =
         `<img class='card-logo' src='media/images/daytona.gif'/><h3>${c.cardNumber}</h3><h4>${c.name}</h4>`;
       this.element.appendChild(card);
