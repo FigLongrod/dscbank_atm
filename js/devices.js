@@ -282,7 +282,7 @@ export class ATMReceiptPrinter {
     let receipt = new Receipt(this, action, from, to, amount, receipt_no);
     let div = receipt.get();
     if (this.element.firstElementChild != null) {
-      div.insertBefore(this.element.firstElementChild);
+      this.element.insertBefore(div, this.element.firstElementChild);
     } else {
       this.element.appendChild(div);
     }
