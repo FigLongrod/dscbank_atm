@@ -46,7 +46,7 @@ export class Cards {
       card.style.top = `${80 + (20 * i)}px`;
       card.style.transform = `translate(${(Math.random() * 6) - 3}px,${(Math.random() * 6) - 3}px) rotate(${(Math.random() * 6) - 3}deg)`;
       card.innerHTML =
-        `<img class='card-logo' src='media/images/daytona.gif'/><h3>${c.cardNumber}</h3><h4>${c.name}</h4>`;
+        `<img class='card-logo' src='media/images/daytona.gif'/><img class='card-chip' src='media/images/chip.png'/><h3>${c.cardNumber}</h3><h4>${c.name}</h4>`;
       this.element.appendChild(card);
       Tools.addEventHandler(
         document.getElementById(card.id),
