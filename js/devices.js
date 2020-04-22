@@ -226,11 +226,12 @@ class Receipt {
   fall() {
     Tools.play(Sounds.rip, 0.25);
     let handle = setInterval(() => {
-      this.y += 1;
-      this.x += 0.25;
+      this.y += 5;
+      this.x += Math.floor((Math.random() * 60)) - 30;
       this.div.style.top = `${this.y}px`;
       this.div.style.left = `${this.x}px`;
-      if (!this.onScreen()){
+      this.div.transform = `rotate(${Math.floor(Math.random() * 4) - 2}deg)`;
+      if (y > 1000) {
         console.log('Receipt fell on the ground');
         clearInterval(handle);
         this.div.remove();

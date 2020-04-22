@@ -112,15 +112,19 @@ div#dispenser {
 }
 div.note {
   position: absolute;
-  top: 10px;
-  left: 8px;
+  top: calc(10px + random(10) - 5px);
+  left: calc(8px + random(10) - 5px);
+  transform: rotate(random(4) - 2deg);
   background-image: url(./media/images/money.jpg);
   background-size: 347px;
   height: 70px;
   width: 170px;
   background-position: -2px 0%;
   cursor: pointer;
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.25);
 }
+
+
 div.note-100 {
   background-position-y: -456px;
 }
