@@ -212,7 +212,7 @@ class Receipt {
     this.y = 0;
     this.div.innerHTML = `<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
     let handle = Tools.addEventHandler(this.div, "click", () => {
-      Tools.play(Sounds.rip).then(() => {
+      Tools.play(Sounds.rip, 0.25).then(() => {
         Tools.removeEventHandler(handle);
         this.printer.removeReceipt(this);
         this.div.remove(); 
@@ -223,7 +223,7 @@ class Receipt {
     return this.div;
   }
   fall() {
-    Tools.play(Sounds.rip);
+    Tools.play(Sounds.rip, 0.25);
     let handle = setInterval(() => {
       this.y += 1;
       this.x += 0.25;
@@ -266,18 +266,21 @@ export class ATMReceiptPrinter {
     if (this.currentReceipt) {
       this.currentReceipt.fall();
     }
-    await Tools.play(Sounds.receipt).then(()  => {
-      let receipt = new Receipt(this, action, from, to, amount, receipt_no);
-      let div = receipt.get();
-      if (this.currentReceipt != null) {
-        div.insertBefore(this.currentReceipt.get());
-      } else {
-        this.element.appendChild(div);
-      }
-      let ppos = this.getCenters(this.element);
-      receipt.setPosition(ppos.x - (div.offsetWidth / 2), ppos.y);    
-      this.currentReceipt = receipt;
-    });
+    await Tools.play(Sounds.receipt, 0.5);
+    await new Promise(resolve => {
+      let handle = setTimeout(()  => {
+        clearTimeout(handle);
+        resolve()
+      }, 4000);
+    })
+    let receipt = new Receipt(this, action, from, to, amount, receipt_no);
+    let div = receipt.get();
+    if (this.currentReceipt != null) {
+      div.insertBefore(this.currentReceipt.get());
+    } else {
+      this.element.appendChild(div);
+    }
+    this.currentReceipt = receipt;
   }
 }
 
