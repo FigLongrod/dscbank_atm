@@ -231,8 +231,9 @@ class Receipt {
     Tools.play(Sounds.rip, 0.25);
     let handle = setInterval(() => {
       this.y += 5;
+      let oldx = this.x;
       this.x = Math.floor(Math.random() * 30) - 60;
-      this.rotate = Math.floor(Math.random() * 4) * (this.x < 0 ? 1 : -1);
+      this.rotate = (this.x - oldx) * 15;
       this.div.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotate}deg)`;
       if (this.y > 400) {
         console.log('Receipt fell on the ground');
