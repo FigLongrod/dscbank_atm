@@ -234,7 +234,7 @@ class Receipt {
     Tools.play(Sounds.rip, 0.25);
     let handle = setInterval(() => {
       this.y += 5;
-      this.x += Math.floor(Math.random() * 30) - 60;
+      this.x = Math.floor(Math.random() * 30) - 60;
       this.rotate += Math.floor(Math.random() * 4) - 8;
       this.div.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotate}deg)`;
       if (this.y > 1000) {
