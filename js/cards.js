@@ -43,8 +43,8 @@ export class Cards {
       card.className = "card";
       card.id = "card-" + c.id;
       card.style.zIndex = i + 2;
-      card.style.top = `${20 * i}px`;
-      card.style.transform = `translate(${(Math.random() * 10) - 5}px,${(Math.random() * 10) - 5}px) rotation(${(Math.random() * 10) - 5}deg)`;
+      card.style.top = `${80 + (20 * i)}px`;
+      card.style.transform = `translate(${(Math.random() * 10) - 5}px,${(Math.random() * 10) - 5}px) rotate(${(Math.random() * 10) - 5}deg)`;
       card.innerHTML =
         `<img class='card-logo' src='media/images/daytona.gif'/><h3>${c.cardNumber}</h3><h4>${c.name}</h4>`;
       this.element.appendChild(card);
