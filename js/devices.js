@@ -210,6 +210,7 @@ class Receipt {
     this.div.className = "receipt";
     this.printer = printer;
     this.y = 0;
+    this.x = 0;
     this.div.innerHTML = `<h4>${action}</h4><h5>From: ${from}</h5><h5>To: ${to}</h5><h5>Amount: ${amount.toFixed(2)}</h5><h5>Receipt No: ${receipt_no}</h5>`;
     let handle = Tools.addEventHandler(this.div, "click", () => {
       Tools.play(Sounds.rip, 0.25).then(() => {
@@ -234,7 +235,7 @@ class Receipt {
         clearInterval(handle);
         this.div.remove();
       }
-    }, 200);
+    }, 10);
   }
   onScreen() {
     let bounds = this.div.getBoundingClientRect();
