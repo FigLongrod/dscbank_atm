@@ -43,6 +43,7 @@ export class Cards {
       card.className = "card";
       card.id = "card-" + c.id;
       card.style.zIndex = i + 2;
+      card.style.top = `${20 * i}px`;
       card.innerHTML =
         `<img class='card-logo' src='media/images/daytona.gif'/><h3>${c.cardNumber}</h3><h4>${c.name}</h4>`;
       this.element.appendChild(card);

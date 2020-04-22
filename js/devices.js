@@ -10,7 +10,7 @@ export class ATMCashReader {
     this.locked = true;
   }
   count() {
-    return this.notes.reduce((total, val) => (total += parseInt(val, 10)));
+    return this.notes.reduce((total, val) => total += parseInt(val, 10), 0);
   }
   unlock(consume) {
     if (consume) {
@@ -20,9 +20,10 @@ export class ATMCashReader {
   }
   add(note) {
     if (this.locked) {
-      return;
+      return false;
     }
     this.notes.push(note);
+    return true;
   }
 }
 
