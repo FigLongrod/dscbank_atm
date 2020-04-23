@@ -507,7 +507,7 @@ export class ATM {
   async runDeposit(action, account, max) {
     document.dispatchEvent(new CustomEvent("insert-enabled"));
     let maxtext = max > 0 ? `(max: ${max.toFixed(2)})` : '';
-    await this.console.appendLines(`¶¶Please insert cash bills into the reader ${maxtext}. ([ESC] to cancel and return notes, [ENTER] to confirm):¶`);
+    await this.console.appendLines(`¶¶Please insert cash bills into the reader ${maxtext}.¶[ESC] Cancel and return notes¶[ENTER] Confirm amount¶`);
     let note = '';
     let notes = [];
     let total = 0;
