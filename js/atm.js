@@ -486,6 +486,8 @@ export class ATM {
           Tools.removeEventHandler(handle1);
           Tools.removeEventHandler(handle2);
           resolve(e.keyCode);
+        } else {
+          await Tools.play(Sounds.error);
         }
       });
       handle2 = Tools.addEventHandler(document, "insert-note", e => {
@@ -513,21 +515,36 @@ export class ATM {
     document.dispatchEvent(new CustomEvent("insert-disabled"));
     if (note == 27) {
       await this.console.appendLines("¶¶Canceled. Please take your cash.¶");
-      // return cash
+      notes.forEach(note => await this.dispenser.dispenseNote(note));
     } else {
       if (max > 0 && total > max) {        
         await this.console.appendLines("¶¶Maximum amount exceeded. Please take your cash.¶");
-        // return cash
+        notes.forEach(note => await this.dispenser.dispenseNote(note));
       } else {
-        let key = await this.readKey(`¶Total inserted: ${val.toFixed2}. Proceed with ${action}? (Y/N):`, 'YNyn', false);
+        let key = await this.readKey(`¶Total inserted: ${total.toFixed2}. Proceed with ${action}? (Y/N):`, 'YNyn', false);
         switch(key) {
           case "Y":
           case "y":
+            try {
+              let response = await this.callAPI("depositfunds", { account_id: account.account_id, amount: total });
+              if (response.response.result == "success") {
+                await this.console.appendLines(`¶${action} successful. Receipt No: ${response.response.receipt_no}¶`);
+                await this.printer.print(action, "CASH", account, total, response.response.receipt_no);
+              } else {
+                await this.console.appendLines(`¶${action} failed. Please take your cash.¶`);
+                notes.forEach(note => await this.dispenser.dispenseNote(note));
+              }
+            } catch (response) {
+              await this.console.appendLines(`Error: ${response.response.error}. Please take your cash.¶`);
+              notes.forEach(note => await this.dispenser.dispenseNote(note));
+            }
             break;
           case "N":
           case "n":
+            notes.forEach(note => await this.dispenser.dispenseNote(note));
             break;
           default:
+            await Tools.play(Sounds.error);
             break;
         }
       }
