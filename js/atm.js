@@ -223,7 +223,7 @@ export class ATM {
             return;
           case "Cash Deposit":
             await this.console.appendLines(`¶¶You selected: Cash Deposit to ${account.name}¶`);
-            await this.runDeposit("Cash Deposit", account);
+            await this.runDeposit("Cash Deposit", account, -1);
             return;
           default:
             Tools.play(Sounds.error);
@@ -499,7 +499,8 @@ export class ATM {
   }
   async runDeposit(action, account, max) {
     document.dispatchEvent(new CustomEvent("insert-enabled"));
-    await this.console.appendLines(`¶¶Please insert cash bills into the reader (max: ${max.toFixed(2)}). ([ESC] to cancel and return notes, [ENTER] to confirm):¶`);
+    let maxtext = max > 0 ? `(max: ${max.toFixed(2)})` : '';
+    await this.console.appendLines(`¶¶Please insert cash bills into the reader ${maxtext}. ([ESC] to cancel and return notes, [ENTER] to confirm):¶`);
     let note = '';
     let total = 0;
     do {
@@ -515,11 +516,11 @@ export class ATM {
       await this.console.appendLines("¶¶Canceled. Please take your cash.¶");
       // return cash
     } else {
-      if (total > max) {        
+      if (max > 0 && total > max) {        
         await this.console.appendLines("¶¶Maximum amount exceeded. Please take your cash.¶");
         // return cash
       } else {
-        let key = await this.readKey(`¶Total inserted: ${val.toFixed2}. Proceed with deposit? (Y/N):`, 'YNyn', false);
+        let key = await this.readKey(`¶Total inserted: ${val.toFixed2}. Proceed with ${action}? (Y/N):`, 'YNyn', false);
         switch(key) {
           case "Y":
           case "y":
