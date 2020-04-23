@@ -237,7 +237,7 @@ export class ATM {
       options.push("Cash Advance");
       options.push("Funds Transfer");
     }
-    if (account.total < account.limit) {
+    if (account.balance < account.limit) {
       options.push("Cash Deposit");
     }
     if (options.length < 1) {
@@ -264,7 +264,7 @@ export class ATM {
             return;
           case "Cash Deposit":
             await this.console.appendLines(`¶¶You selected: Cash Deposit to ${account.name}¶`);
-            await this.runDeposit("Cash Deposit", account, account.limit - account.total);
+            await this.runDeposit("Cash Deposit", account, account.limit - account.balance);
             return;
           default:
             Tools.play(Sounds.error);
@@ -340,7 +340,7 @@ export class ATM {
                 await this.dispenser.dispense(val);
                 try {
                   let response = await this.callAPI("applywithdrawal", { lock_id: lock });
-                  account.total = response.response.balance.total;
+                  account.balance = response.response.balance.balance;
                   account.available = response.response.balance.available;
                   account.limit = response.response.balance.limit;
                   await this.printer.print("withdrawal", `${account.account_id}:${account.name}`, 'CASH', val, response.response.receipt_no);
@@ -351,7 +351,7 @@ export class ATM {
                   await this.console.appendLines(`¶¶Error:${response.response.error}¶`);
                   try {
                     let response2 = await this.callAPI("releasewithdrawal", { lock_id: lock });
-                    account.total = response2.response.balance.total;
+                    account.balance = response2.response.balance.balance;
                     account.available = response2.response.balance.available;
                     account.limit = response2.response.balance.limit;
                     await this.console.appendLines("¶¶Reserved funds released.¶");
@@ -457,10 +457,10 @@ export class ATM {
           try {
             let response3 = await this.callAPI("transferfunds", { source_id: account.account_id, destination_id: destination.account_id, amount: amount });
             if (response3.response.result == "success") {
-              account.total = response3.response.source.balance.total;
+              account.balance = response3.response.source.balance.balance;
               account.available = response3.response.source.balance.available;
               account.limit = response3.response.source.balance.limit;
-              destination.total = response3.response.destination.balance.total;
+              destination.balance = response3.response.destination.balance.balance;
               destination.available = response3.response.destination.balance.available;
               destination.limit = response3.response.destination.balance.limit;
               await this.printer.print(action, `${account.account_id}:${account.name}`, `${destination.account_id}:${destination.name}`, amount, response3.response.receipt_no);
@@ -536,7 +536,7 @@ export class ATM {
               let response = await this.callAPI("depositfunds", { account_id: account.account_id, amount: total });
               if (response.response.result == "success") {
                 await this.console.appendLines(`¶${action} successful. Receipt No: ${response.response.receipt_no}¶`);
-                await this.printer.print(action, "CASH", account, total, response.response.receipt_no);
+                await this.printer.print(action, "CASH", `${account.account_id}: ${account.name}`, total, response.response.receipt_no);
               } else {
                 await this.console.appendLines(`¶${action} failed. Please take your cash.¶`);
                 await this.returnNotes(notes);
