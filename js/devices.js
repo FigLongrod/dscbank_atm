@@ -395,6 +395,8 @@ export class ATMCashReader {
       this.aborting = false;
       return null;
     } else {
+      // move received notes to dispenser inventory
+      this.readNotes.forEach(this.dispenser.add);
       let notes = this.readNotes;
       this.readNotes = [];
       this.aborting=false;
