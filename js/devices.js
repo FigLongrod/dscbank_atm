@@ -1,32 +1,5 @@
 import { Tools, Sounds } from "./tools.js";
 
-export class ATMCashReader {
-  constructor(atm) {
-    this.atm = atm;
-    this.notes = [];
-    this.locked = false;
-  }
-  lock() {
-    this.locked = true;
-  }
-  count() {
-    return this.notes.reduce((total, val) => total += parseInt(val, 10), 0);
-  }
-  unlock(consume) {
-    if (consume) {
-      this.atm.dispenser.add(this.notes);
-      this.notes.length = 0;
-    }
-  }
-  add(note) {
-    if (this.locked) {
-      return false;
-    }
-    this.notes.push(note);
-    return true;
-  }
-}
-
 export class ATMCashDispenser {
   constructor(element, stock) {
     this.element = element;

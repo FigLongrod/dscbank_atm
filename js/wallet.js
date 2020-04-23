@@ -1,9 +1,8 @@
 import { Tools, Sounds } from './tools.js';
 
 class Cash {
-    constructor(cashElement, cashReader) {
+    constructor(cashElement) {
         this.element = cashElement;
-        this.reader = cashReader;
         this.notes = {}
         Tools.addEventHandler(document, "insert-enabled", () => this.allowInsert = true, this);
         Tools.addEventHandler(document, "insert-disabled", () => this.allowInsert = false, this);

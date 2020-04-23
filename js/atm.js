@@ -502,11 +502,12 @@ export class ATM {
     let maxtext = max > 0 ? `(max: ${max.toFixed(2)})` : '';
     await this.console.appendLines(`¶¶Please insert cash bills into the reader ${maxtext}. ([ESC] to cancel and return notes, [ENTER] to confirm):¶`);
     let note = '';
+    let notes = [];
     let total = 0;
     do {
       note = await this.waitForNoteOrKey()
       if (typeof note === 'string') {
-        this.cashreader.addNote(note);
+        notes.push(note);
         total += Number(note);
         await this.console.appendLines(`¶Note Read: $${note}, Total: $${total.toFixed(2)}¶`);
       }
