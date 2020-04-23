@@ -401,19 +401,26 @@ export class ATMCashReader {
       return notes;
     }    
   }
-  async waitForNote() {
+  waitForNote() {
     this.waiting = true;
     this.aborting = false;
-    while (!this.aborting) {
-      if (this.insertedNotes.length > 0) {
-        let next = this.insertedNotes.slice(0,1);
-        this.readNotes.push(next);
-        this.waiting = false;
-        return next;
-      }
-    }
-    this.waiting = false;
-    return this.confirm;
+    return new Promise(resolve => {
+      let handle = setInterval(() => {
+        if (this.aborting) {
+          clearInterval(handle);
+          this.waiting = false;
+          resolve(this.confirm);
+        }
+        if (this.insertedNotes.length > 0) {
+          clearInterval(handle)
+          let next = this.insertedNotes.slice(0,1);
+          this.readNotes.push(next);
+          this.waiting = false;
+          resolve(next);
+        }
+        
+      }, 10);
+    });
   }
   insertNote(note) {
     if (!this.aborting && this.waiting) {
