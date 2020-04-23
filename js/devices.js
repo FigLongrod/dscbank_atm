@@ -414,9 +414,9 @@ export class ATMCashReader {
         if (this.insertedNotes.length > 0) {
           clearInterval(handle)
           let next = this.insertedNotes.splice(0,1);
-          this.readNotes.push(next);
+          this.readNotes.push(next[0]);
           this.waiting = false;
-          resolve(next);
+          resolve(next[0]);
         }
         
       }, 10);
