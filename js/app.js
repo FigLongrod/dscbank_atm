@@ -10,6 +10,6 @@ let atm = new ATM(
     document.getElementById("dispenser"),
     document.getElementById("printer")
 );
-let wallet = new Wallet(document.getElementById("cards"), document.getElementById("cash"), atm.cardreader);
+let wallet = new Wallet(document.getElementById("cards"), document.getElementById("cash"), atm.cardreader, atm.cashreader);
 wallet.init().then(() => wallet.draw());
 atm.init();

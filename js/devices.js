@@ -363,3 +363,63 @@ export class ATMConsole {
     }
   }
 }
+
+export class ATMCashReader {
+  constructor(dispenser) {
+    this.dispenser = dispenser;
+    this.insertedNotes = [];
+    this.readNotes = [];
+    this.waiting = false;
+    this.aborting = false;
+    this.confirm = false;
+  }
+  async abort(refund) {
+    // abort any process waiting to read cash
+    this.confirm = !refund;
+    this.aborting = true;    
+    await new Promise(resolve => {
+      let handle = setInterval(() => {
+        if (!this.waiting) {
+          clearInterval(handle);
+          resolve();
+        }
+      }, 10);      
+    });
+    while(this.insertedNotes.length> 0) {
+      await this.dispenser.dispenseNote(this.insertedNotes.slice(0,1));
+    }
+    if (refund) {
+      while(this.readNotes.length > 0) {
+        await this.dispenser.dispenseNote(this.readNotes.slice(0,1));
+      }
+      this.aborting = false;
+      return null;
+    } else {
+      let notes = this.readNotes;
+      this.readNotes = [];
+      this.aborting=false;
+      return notes;
+    }    
+  }
+  async waitForNote() {
+    this.waiting = true;
+    this.aborting = false;
+    while (!this.aborting) {
+      if (this.insertedNotes.length > 0) {
+        let next = this.insertedNotes.slice(0,1);
+        this.readNotes.push(next);
+        this.waiting = false;
+        return next;
+      }
+    }
+    this.waiting = false;
+    return this.confirm;
+  }
+  insertNote(note) {
+    if (!this.aborting && this.waiting) {
+      this.insertedNotes.push(note);
+      return true;
+    }
+    return false;
+  }
+}

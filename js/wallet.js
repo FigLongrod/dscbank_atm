@@ -1,11 +1,10 @@
 import { Tools, Sounds } from './tools.js';
 
 class Cash {
-    constructor(cashElement) {
+    constructor(cashElement, cashReader) {
         this.element = cashElement;
+        this.reader = cashReader;
         this.notes = {}
-        Tools.addEventHandler(document, "insert-enabled", () => this.allowInsert = true, this);
-        Tools.addEventHandler(document, "insert-disabled", () => this.allowInsert = false, this);
         Tools.addEventHandler(document, "add-note", e => {
             this.notes[e.detail]++
             this.draw();
@@ -38,17 +37,15 @@ class Cash {
                 div.style.top = `${offs}px`;
                 div.style.transform = `translate(${(Math.random() * 4) - 2}px,${(Math.random() * 4) - 2}px) rotate(${(Math.random() * 4) - 2 + rot}deg)`;
                 Tools.addEventHandler(div, "click", () => {
-                    if (this.allowInsert) {
-                        Tools.play(Sounds.take_note);
-                        this.notes[note]--;
-                        document.dispatchEvent(new CustomEvent("insert-note", {detail: note}));
+                    Tools.play(Sounds.take_note);
+                    if (this.reader.insertNote(note)) {
                         div.remove();
+                        this.notes[note]--;
                     }
                 }, this);
                 this.element.appendChild(div);
             }
             rot += 8;
-            //offs += 40;
         });
     }
 }

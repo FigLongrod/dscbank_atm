@@ -3,7 +3,8 @@ import {
   ATMCashDispenser,
   ATMCardReader,
   ATMPinReader,
-  ATMReceiptPrinter
+  ATMReceiptPrinter,
+  ATMCashReader
 } from "./devices.js";
 import { FinancialHost } from "./host.js";
 import { Tools, Sounds } from "./tools.js";
@@ -47,6 +48,7 @@ export class ATM {
     this.cardreader = new ATMCardReader(cardreaderElement);
     this.pinreader = new ATMPinReader(pinreaderElement);
     this.printer = new ATMReceiptPrinter(printerElement);
+    this.cashreader = new ATMCashReader(this.dispenser);
     this.id = 715;
     this.host = new FinancialHost();
     this.session = null;
@@ -479,23 +481,19 @@ export class ATM {
     }
   }
   async waitForNoteOrKey() {
-    return new Promise(resolve => {
-      let handle1, handle2;
-      handle1 = Tools.addEventHandler(document, "keyup", e => {
-        if (e.keyCode == 27 || e.keyCode == 13) {
+      let handle1, handle2, notes;
+      handle1 = Tools.addEventHandler(document, "keyup", async e => {
+        if (e.keyCode == 27) {
           Tools.removeEventHandler(handle1);
-          Tools.removeEventHandler(handle2);
-          resolve(e.keyCode);
+          let notes = await this.cashreader.abort(true);
+        } else if (e.keyCode == 13) {
+          Tools.removeEventHandler(handle1);
+          let notes = await this.cashreader.abort(false);
         } else {
           Tools.play(Sounds.error);
         }
       });
-      handle2 = Tools.addEventHandler(document, "insert-note", e => {
-        Tools.removeEventHandler(handle1);
-        Tools.removeEventHandler(handle2);
-        resolve(e.detail);      
-      })  
-    });
+      return await this.cashreader.waitForNote();
   }
   async returnNotes(notes) {
     Tools.play(Sounds.dispense);
@@ -518,9 +516,9 @@ export class ATM {
         total += Number(note);
         await this.console.appendLines(`¶Note Read: $${note}, Total: $${total.toFixed(2)}¶`);
       }
-    } while (note != 27 && note != 13);
+    } while (typeof note === 'string');
     document.dispatchEvent(new CustomEvent("insert-disabled"));
-    if (note == 27) {
+    if (note == false) {
       await this.console.appendLines("¶¶Canceled. Please take your cash.¶");
       await this.returnNotes(notes);
     } else {
