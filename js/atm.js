@@ -480,54 +480,48 @@ export class ATM {
       }
     }
   }
-  async waitForNoteOrKey() {
-      let handle1, handle2, notes;
-      handle1 = Tools.addEventHandler(document, "keyup", async e => {
-        if (e.keyCode == 27) {
-          Tools.removeEventHandler(handle1);
-          let notes = await this.cashreader.abort(true);
-        } else if (e.keyCode == 13) {
-          Tools.removeEventHandler(handle1);
-          let notes = await this.cashreader.abort(false);
-        } else {
-          Tools.play(Sounds.error);
-        }
-      });
-      return await this.cashreader.waitForNote();
-  }
   async returnNotes(notes) {
     Tools.play(Sounds.dispense);
-    while(notes.length > 0) {
+    while (notes.length > 0) {
       let note = notes.pop();
       await this.dispenser.dispenseNote(note);
     }
   }
   async runDeposit(action, account, max) {
-    document.dispatchEvent(new CustomEvent("insert-enabled"));
     let maxtext = max > 0 ? `(max: ${max.toFixed(2)})` : '';
     await this.console.appendLines(`¶¶Please insert cash bills into the reader ${maxtext}.¶[ESC] Cancel and return notes¶[ENTER] Confirm amount¶`);
     let note = '';
     let notes = [];
     let total = 0;
+    let handle1 = Tools.addEventHandler(document, "keyup", async e => {
+      if (e.keyCode == 27) {
+        Tools.removeEventHandler(handle1);
+        await this.cashreader.abort(true);
+      } else if (e.keyCode == 13) {
+        Tools.removeEventHandler(handle1);
+        await this.cashreader.abort(false);
+      } else {
+        Tools.play(Sounds.error);
+      }
+    });
     do {
-      note = await this.waitForNoteOrKey()
+      note = await this.cashreader.waitForNote();
       if (typeof note === 'string') {
         notes.push(note);
         total += Number(note);
         await this.console.appendLines(`¶Note Read: $${note}, Total: $${total.toFixed(2)}¶`);
       }
     } while (typeof note === 'string');
-    document.dispatchEvent(new CustomEvent("insert-disabled"));
     if (note == false) {
       await this.console.appendLines("¶¶Canceled. Please take your cash.¶");
       await this.returnNotes(notes);
     } else {
-      if (max > 0 && total > max) {        
+      if (max > 0 && total > max) {
         await this.console.appendLines("¶¶Maximum amount exceeded. Please take your cash.¶");
         await this.returnNotes(notes);
       } else {
         let key = await this.readKey(`¶Total inserted: ${total.toFixed(2)}. Proceed with ${action}? (Y/N):`, 'YNyn', false);
-        switch(key) {
+        switch (key) {
           case "Y":
           case "y":
             try {
