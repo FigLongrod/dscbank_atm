@@ -227,7 +227,7 @@ div#printer {
   margin-left: 12px;
 }
 div.receipt {
-  border: 1px solid black;
+  border: 1px solid #d8d8d859;
   padding: 5px;
   color: darkgray;
   background-color: white;
@@ -239,6 +239,10 @@ div.receipt {
   margin-left: 4px;
   cursor: pointer;
   position: relative;
+  background: rgb(190,190,190);
+  background: linear-gradient(180deg, rgba(190,190,190,1) 0%, rgba(244,244,244,1) 10%, rgb(255, 255, 255) 100%);
+  border-top: none;
+  box-shadow: 3px 3px 8px rgba(0,0,0,0.25);
 }
 div.receipt h4 {
   text-align: center;
