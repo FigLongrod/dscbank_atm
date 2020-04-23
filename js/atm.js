@@ -497,6 +497,12 @@ export class ATM {
       })  
     });
   }
+  async returnNotes(notes) {
+    while(notes.length > 0) {
+      let note = note.pop();
+      await this.dispenser.dispenseNote(note);
+    }
+  }
   async runDeposit(action, account, max) {
     document.dispatchEvent(new CustomEvent("insert-enabled"));
     let maxtext = max > 0 ? `(max: ${max.toFixed(2)})` : '';
@@ -515,11 +521,11 @@ export class ATM {
     document.dispatchEvent(new CustomEvent("insert-disabled"));
     if (note == 27) {
       await this.console.appendLines("¶¶Canceled. Please take your cash.¶");
-      notes.forEach(note => await this.dispenser.dispenseNote(note));
+      await this.returnNotes(notes);
     } else {
       if (max > 0 && total > max) {        
         await this.console.appendLines("¶¶Maximum amount exceeded. Please take your cash.¶");
-        notes.forEach(note => await this.dispenser.dispenseNote(note));
+        await this.returnNotes(notes);
       } else {
         let key = await this.readKey(`¶Total inserted: ${total.toFixed2}. Proceed with ${action}? (Y/N):`, 'YNyn', false);
         switch(key) {
@@ -532,16 +538,16 @@ export class ATM {
                 await this.printer.print(action, "CASH", account, total, response.response.receipt_no);
               } else {
                 await this.console.appendLines(`¶${action} failed. Please take your cash.¶`);
-                notes.forEach(note => await this.dispenser.dispenseNote(note));
+                await this.returnNotes(notes);
               }
             } catch (response) {
               await this.console.appendLines(`Error: ${response.response.error}. Please take your cash.¶`);
-              notes.forEach(note => await this.dispenser.dispenseNote(note));
+              await this.returnNotes(notes);
             }
             break;
           case "N":
           case "n":
-            notes.forEach(note => await this.dispenser.dispenseNote(note));
+            await this.returnNotes(notes);
             break;
           default:
             await Tools.play(Sounds.error);
