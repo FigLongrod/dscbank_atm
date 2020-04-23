@@ -23,6 +23,7 @@ class Cash {
             "2": Math.floor(Math.random() * 4),
             "1": Math.floor(Math.random() * 20)
         };
+        console.log(`Total: ${Object.keys(this.notes).map(k => parseInt(k, 10) * this.notes[k]).reduce((total, currency) => total += currency, 0)}`, this.notes);
     }
     draw() {
         this.element.innerHTML = "";

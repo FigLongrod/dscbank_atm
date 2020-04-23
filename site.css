@@ -25,6 +25,7 @@ table#console {
   border-collapse: collapse;
   background: linear-gradient(133deg, rgba(0,0,0,1) 0%, rgb(27, 27, 27) 24%, rgb(29, 29, 29) 51%, rgb(0, 0, 0) 80%, rgba(0,0,0,1) 100%);
   text-shadow: 2px -2px 4px #01ff38;
+  table-layout: fixed;
 }
 
 table#console td {

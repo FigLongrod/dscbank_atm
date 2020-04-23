@@ -481,6 +481,9 @@ export class ATM {
     }
   }
   async returnNotes(notes) {
+    if (!notes || notes.length < 1) {
+      return;
+    }
     Tools.play(Sounds.dispense);
     while (notes.length > 0) {
       let note = notes.pop();

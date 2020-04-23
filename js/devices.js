@@ -210,7 +210,7 @@ class Receipt {
       this.y += 5;
       let oldx = this.x;
       this.x = Math.floor(Math.random() * 30) - 60;
-      this.rotate = (this.x - oldx) * 15;
+      this.rotate = ((this.x - oldx)/60) * 15;
       this.div.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotate}deg)`;
       if (this.y > 400) {
         console.log('Receipt fell on the ground');
@@ -319,7 +319,7 @@ export class ATMConsole {
     }
     if (cell) {
       cell.innerHTML = char;
-      Tools.play(Sounds.console, 0.2);
+      Tools.play(Sounds.console, 0.1);
       if (advance) {
         this.currentColumn++;
         if (this.currentColumn >= this.width) {
@@ -344,7 +344,7 @@ export class ATMConsole {
         } else {
           this.writeChar(chars.pop(), true);
         }
-      }, 10);
+      }, 1);
     })
   }
   async appendLines(lines) {
@@ -383,7 +383,7 @@ export class ATMCashReader {
           clearInterval(handle);
           resolve();
         }
-      }, 10);      
+      }, 1);      
     });
     while(this.insertedNotes.length> 0) {
       await this.dispenser.dispenseNote(this.insertedNotes.slice(0,1));
@@ -419,7 +419,7 @@ export class ATMCashReader {
           resolve(next[0]);
         }
         
-      }, 10);
+      }, 1);
     });
   }
   insertNote(note) {
