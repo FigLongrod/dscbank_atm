@@ -66,6 +66,7 @@ div.pin {
 }
 div#cards {
   position: relative;
+  z-index: 200;
 }
 div.card {
   border: 1px solid white;
