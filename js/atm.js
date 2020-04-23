@@ -499,7 +499,7 @@ export class ATM {
   }
   async returnNotes(notes) {
     while(notes.length > 0) {
-      let note = note.pop();
+      let note = notes.pop();
       await this.dispenser.dispenseNote(note);
     }
   }
