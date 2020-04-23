@@ -79,7 +79,7 @@ div.card {
   color: white;
   text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.73);
   width: 260px;
-  height: 120px;
+  height: 130px;
   cursor: pointer;
   position: absolute;
   box-shadow: 3px 3px rgba(0,0,0,0.25);
@@ -104,7 +104,7 @@ div.card h4 {
   font-size: 13px;
   font-family: monospace;
   position: absolute;
-  top: 95px;
+  top: 100px;
   left: 25px;
 }
 
@@ -122,15 +122,15 @@ img.card-logo {
 img.card-chip {
   position: relative;
   left: 20px;
-  top: 25px;
+  top: 20px;
   width: 50px;
   height: 45px;
 }
 img.card-vasi {
   position: absolute;
   left: 210px;
-  top: 90px;
-  width: 50px;
+  top: 100px;
+  width: 60px;
   height: 30px;
   border: 1px solid white;
 }
@@ -253,7 +253,7 @@ div.receipt h4 {
 }
 
 div#wallet {
-  background-image: url(./media/images/wallet.png);
+  background-image: url(./media/images/wallet-and-hand.png);
   width: 800px;
   height: 350px;
   background-size: 100% 100%;
