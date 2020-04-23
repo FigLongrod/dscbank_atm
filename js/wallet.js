@@ -6,7 +6,10 @@ class Cash {
         this.notes = {}
         Tools.addEventHandler(document, "insert-enabled", () => this.allowInsert = true, this);
         Tools.addEventHandler(document, "insert-disabled", () => this.allowInsert = false, this);
-        Tools.addEventHandler(document, "add-note", e => this.notes[e.detail]++);
+        Tools.addEventHandler(document, "add-note", e => {
+            this.notes[e.detail]++
+            this.draw();
+        });
     }
     addNote(note) {
         this.notes[note]++;
