@@ -154,6 +154,7 @@ div.note {
 div#cash {
   position: relative;
     left: 415px;
+    top: 50px;
 }
 div#cash div.note {
   background-size: 208% 740% !important;
