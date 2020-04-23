@@ -479,10 +479,59 @@ export class ATM {
           return;
       }
     }
-
+  }
+  async waitForNoteOrKey() {
+    return new Promise(resolve => {
+      let handle1, handle2;
+      handle1 = Tools.addEventHandler(document, "keyup", e => {
+        if (e.keyCode == 27 || e.keyCode == 13) {
+          Tools.removeEventHandler(handle1);
+          Tools.removeEventHandler(handle2);
+          resolve(e.keyCode);
+        }
+      });
+      handle2 = Tools.addEventHandler(document, "insert-note", e => {
+        Tools.removeEventHandler(handle1);
+        Tools.removeEventHandler(handle2);
+        resolve(e.detail);      
+      })  
+    });
   }
   async runDeposit(action, account, max) {
-    return new Promise((resolve, reject) => { });
+    document.dispatchEvent(new CustomEvent("insert-enabled"));
+    await this.console.appendLines(`¶¶Please insert cash bills into the reader (max: ${max.toFixed(2)}). ([ESC] to cancel and return notes, [ENTER] to confirm):¶`);
+    let note = '';
+    let total = 0;
+    do {
+      note = await this.waitForNoteOrKey()
+      if (typeof note === 'string') {
+        this.cashreader.addNote(note);
+        total += Number(note);
+        await this.console.appendLines(`¶Note Read: $${note}, Total: $${total.toFixed(2)}¶`);
+      }
+    } while (note != 27 && note != 13);
+    document.dispatchEvent(new CustomEvent("insert-disabled"));
+    if (note == 27) {
+      await this.console.appendLines("¶¶Canceled. Please take your cash.¶");
+      // return cash
+    } else {
+      if (total > max) {        
+        await this.console.appendLines("¶¶Maximum amount exceeded. Please take your cash.¶");
+        // return cash
+      } else {
+        let key = await this.readKey(`¶Total inserted: ${val.toFixed2}. Proceed with deposit? (Y/N):`, 'YNyn', false);
+        switch(key) {
+          case "Y":
+          case "y":
+            break;
+          case "N":
+          case "n":
+            break;
+          default:
+            break;
+        }
+      }
+    }
   }
   async waitForCard() {
     do {

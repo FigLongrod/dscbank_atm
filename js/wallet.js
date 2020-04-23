@@ -5,6 +5,8 @@ class Cash {
         this.element = cashElement;
         this.reader = cashReader;
         this.notes = {}
+        Tools.addEventHandler(document, "insert-enabled", () => this.allowInsert = true, this);
+        Tools.addEventHandler(document, "insert-disabled", () => this.allowInsert = false, this);
     }
     addNote(note) {
         this.notes[note]++;
@@ -32,6 +34,13 @@ class Cash {
                 div.style.zIndex = z++;
                 div.style.top = `${offs}px`;
                 div.style.transform = `translate(${(Math.random() * 4) - 2}px,${(Math.random() * 4) - 2}px) rotate(${(Math.random() * 4) - 2 + rot}deg)`;
+                Tools.addEventHandler(div, "click", () => {
+                    if (this.allowInsert) {
+                        this.notes[note]--;
+                        document.dispatchEvent(new CustomEvent("insert-note", {detail: note}));
+                        div.remove();
+                    }
+                }, this);
                 this.element.appendChild(div);
             }
             rot += 8;
