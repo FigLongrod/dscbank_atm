@@ -715,6 +715,7 @@ export class FinancialHost {
             );
             return;
           }
+          account = account[0];
           if (isNaN(request.request.amount) || request.request.amount <= 0) {
             reject(
               this.error(
