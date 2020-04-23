@@ -487,7 +487,7 @@ export class ATM {
           Tools.removeEventHandler(handle2);
           resolve(e.keyCode);
         } else {
-          await Tools.play(Sounds.error);
+          Tools.play(Sounds.error);
         }
       });
       handle2 = Tools.addEventHandler(document, "insert-note", e => {
