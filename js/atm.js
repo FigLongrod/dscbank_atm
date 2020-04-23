@@ -2,7 +2,6 @@ import {
   ATMConsole,
   ATMCashDispenser,
   ATMCardReader,
-  ATMCashReader,
   ATMPinReader,
   ATMReceiptPrinter
 } from "./devices.js";
@@ -46,7 +45,6 @@ export class ATM {
     this.console = new ATMConsole(consoleElement);
     this.dispenser = new ATMCashDispenser(dispenserElement);
     this.cardreader = new ATMCardReader(cardreaderElement);
-    this.reader = new ATMCashReader();
     this.pinreader = new ATMPinReader(pinreaderElement);
     this.printer = new ATMReceiptPrinter(printerElement);
     this.id = 715;
