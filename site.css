@@ -3,9 +3,12 @@
 body {
   font-family: helvetica, arial, sans-serif;
   margin: 2em;
-  padding-left: 20px;
+  background-color: rgb(0,0,0);
+  background-image: url(media/images/brick.jpg);
+  background-position: top left;
+  background-repeat: repeat;
+  background-attachment: fixed;
 }
-
 h1 {
   font-style: italic;
   color: #373fff;
