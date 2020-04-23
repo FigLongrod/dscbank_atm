@@ -22,7 +22,10 @@ export class ATMCashDispenser {
     noteDiv.style.transform = `rotate(${Math.floor(Math.random() * 5)}deg)`;
     this.element.appendChild(noteDiv);
     Tools.addEventHandler(noteDiv, "click", () => {
-      Tools.play(Sounds.take_note).then(() => noteDiv.remove());
+      Tools.play(Sounds.take_note).then(() => {
+        document.dispatchEvent(new CustomEvent("add-note", {detail: note}));
+        noteDiv.remove()
+      });
     }, noteDiv);
     await new Promise(resolve => {
       setTimeout(resolve, 250);

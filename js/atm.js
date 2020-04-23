@@ -498,6 +498,7 @@ export class ATM {
     });
   }
   async returnNotes(notes) {
+    Tools.play(Sounds.dispense);
     while(notes.length > 0) {
       let note = notes.pop();
       await this.dispenser.dispenseNote(note);
