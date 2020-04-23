@@ -528,7 +528,7 @@ export class ATM {
         await this.console.appendLines("¶¶Maximum amount exceeded. Please take your cash.¶");
         await this.returnNotes(notes);
       } else {
-        let key = await this.readKey(`¶Total inserted: ${total.toFixed2}. Proceed with ${action}? (Y/N):`, 'YNyn', false);
+        let key = await this.readKey(`¶Total inserted: ${total.toFixed(2)}. Proceed with ${action}? (Y/N):`, 'YNyn', false);
         switch(key) {
           case "Y":
           case "y":
@@ -542,7 +542,7 @@ export class ATM {
                 await this.returnNotes(notes);
               }
             } catch (response) {
-              await this.console.appendLines(`Error: ${response.response.error}. Please take your cash.¶`);
+              await this.console.appendLines(`Error: ${response.response && response.response.er ? response.response.error : response}. Please take your cash.¶`);
               await this.returnNotes(notes);
             }
             break;
